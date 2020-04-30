@@ -32,10 +32,12 @@ If you want to control the memory usage, use java -jar -Xmx128m ← adapt as it 
 
 It uses JDK 8
 
- * `gradlew jar` <br>
+ * `./gradlew jar` <br>
 Creates a jar that can be executed
- * `gradlew check` <br>
-Executes the unit tests and generates a report
+
+ * `./gradlew check` <br>
+Executes the unit tests and generates a report of the test results and the coverage
+
 
 ## License
 
