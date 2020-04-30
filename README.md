@@ -1,4 +1,6 @@
-﻿## Getting Started
+﻿[![Build Status](https://travis-ci.com/patrickuhlmann/linedifference.svg?branch=master)](https://travis-ci.com/patrickuhlmann/linedifference)
+
+## Getting Started
 
 This is a command line tool which compares two input files. It creates an output folder containing three files:
   * both.txt = all lines that appear in both files (sorted)
@@ -27,6 +29,13 @@ If you want to control the memory usage, use java -jar -Xmx128m ← adapt as it 
 - Sorting and diffing two 1 GB files in 60seconds using -Xmx64m
 
 ## Building
+
+It uses JDK 8
+
+ * `gradlew jar` <br>
+Creates a jar that can be executed
+ * `gradlew check` <br>
+Executes the unit tests and generates a report
 
 ## License
 
