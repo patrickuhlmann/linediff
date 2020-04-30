@@ -1,5 +1,7 @@
 ﻿[![Build Status](https://travis-ci.com/patrickuhlmann/linedifference.svg?branch=master)](https://travis-ci.com/patrickuhlmann/linedifference)
 
+[![codecov](https://codecov.io/gh/patrickuhlmann/linedifference/branch/master/graph/badge.svg)](https://codecov.io/gh/patrickuhlmann/linedifference)
+
 ## Getting Started
 
 This is a command line tool which compares two input files. It creates an output folder containing three files:
