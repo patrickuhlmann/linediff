@@ -37,3 +37,9 @@ jar {
 /* jacoco configuration */
 check.dependsOn jacocoTestReport
 jacocoTestReport.mustRunAfter test
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
