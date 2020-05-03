@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -90,8 +91,6 @@ public class FileUtilsTest extends BaseTest {
     @Test
     @DisplayName("throw exception if generate file is null")
     public void generateFileWithRandomLinesNull() {
-        Path filePath = tempDir.resolve("out.txt");
-
         Assertions.assertThrows(NullPointerException.class,
                 () -> FileUtils.generateFileWithRandomLines(null, 10));
     }
@@ -103,5 +102,39 @@ public class FileUtilsTest extends BaseTest {
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> FileUtils.generateFileWithRandomLines(filePath, -10));
+    }
+
+    @Test
+    @DisplayName("regular file with extension")
+    public void regularFileExtension() {
+        Assertions.assertEquals("/some/file/file_1.txt",
+                FileUtils.getPathWithSuffixInFilename(Paths.get("/some/file/file.txt"), "_1").toString());
+    }
+
+    @Test
+    @DisplayName("file with no extension")
+    public void noExtension() {
+        Assertions.assertEquals("/some/file/file_1",
+                FileUtils.getPathWithSuffixInFilename(Paths.get("/some/file/file"), "_1").toString());
+    }
+
+    @Test
+    @DisplayName("file without name, only extension")
+    public void onlyFileExtension() {
+        Assertions.assertEquals("/some/file/_1.gitignore",
+                FileUtils.getPathWithSuffixInFilename(Paths.get("/some/file/.gitignore"), "_1").toString());
+    }
+
+    @Test
+    @DisplayName("wrong parameters for path with suffix")
+    public void wrongParametersPathWithSuffix() {
+        Assertions.assertThrows(NullPointerException.class, () ->
+                FileUtils.getPathWithSuffixInFilename(null, "_1"));
+
+        Assertions.assertThrows(NullPointerException.class, () ->
+                FileUtils.getPathWithSuffixInFilename(null, null));
+
+        Assertions.assertThrows(NullPointerException.class, () ->
+                FileUtils.getPathWithSuffixInFilename(Paths.get("bla"), null));
     }
 }

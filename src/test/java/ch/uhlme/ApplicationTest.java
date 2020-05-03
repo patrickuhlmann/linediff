@@ -73,6 +73,23 @@ public class ApplicationTest extends BaseTest {
         verifyFile(output, Arrays.asList("a", "d", "f"));
     }
 
+    @Test
+    @DisplayName("split execution")
+    public void regularExecutionWithSplit() throws IOException {
+        List<String> inputLines = Arrays.asList("a", "b", "c");
+
+        Path input = tempDir.resolve("input.txt");
+        Files.write(input, inputLines, StandardCharsets.UTF_8);
+
+        Assertions.assertDoesNotThrow(() -> Application.main(new String[]{"split", input.toString(), "2"}));
+
+        Path output1 = tempDir.resolve("input_1.txt");
+        verifyFile(output1, Arrays.asList("a", "b"));
+
+        Path output2 = tempDir.resolve("input_2.txt");
+        verifyFile(output2, Collections.singletonList("c"));
+    }
+
     private void verifyFile(Path file, List<String> elements) throws IOException {
         List<String> lines = Files.readAllLines(file);
         Assertions.assertEquals(elements.size(), lines.size());

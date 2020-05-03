@@ -52,7 +52,7 @@ public class LineDiffCommand {
     private Path sortInputFileIfNeeded(Path input, Path output) throws IOException {
         if (!FileUtils.areLinesInFileSorted(input)) {
             System.out.println(String.format("Input file %s is unsorted, sorting...", input));
-            if (!output.toFile().mkdirs()) {
+            if (!output.toFile().exists() && !output.toFile().mkdirs()) {
                 throw new IOException(String.format("Unable to create directory %s", output));
             }
             ExternalSort sort = new ExternalSort();

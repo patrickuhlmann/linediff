@@ -2,6 +2,7 @@ package ch.uhlme.utils;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Random;
 
@@ -68,4 +69,22 @@ public class FileUtils {
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
     }
+
+    public static Path getPathWithSuffixInFilename(Path path, String suffix) {
+        Objects.requireNonNull(path);
+        Objects.requireNonNull(suffix);
+
+        int fileExtensionPosition = path.toString().lastIndexOf(".");
+
+        String filename;
+        if (fileExtensionPosition > -1) {
+            filename = path.toString().substring(0, fileExtensionPosition);
+            filename += suffix;
+            filename += path.toString().substring(fileExtensionPosition);
+        } else {
+            filename = path.toString() + suffix;
+        }
+        return Paths.get(filename);
+    }
+
 }

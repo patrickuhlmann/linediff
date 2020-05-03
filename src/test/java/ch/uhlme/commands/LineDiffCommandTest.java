@@ -76,8 +76,8 @@ public class LineDiffCommandTest extends BaseTest {
     @Test
     @DisplayName("regular execution")
     public void regularExecutionWithSorting() throws IOException {
-        List<String> firstInputLines = Arrays.asList("a", "b", "c");
-        List<String> secondInputLines = Arrays.asList("d", "a", "f");
+        List<String> firstInputLines = Arrays.asList("g", "b", "c");
+        List<String> secondInputLines = Arrays.asList("d", "g", "f");
 
         Path firstInput = tempDir.resolve("input1.txt");
         Files.write(firstInput, firstInputLines, StandardCharsets.UTF_8);
@@ -91,7 +91,7 @@ public class LineDiffCommandTest extends BaseTest {
                 () -> diffCommand.run(new String[]{firstInput.toString(), secondInput.toString(), output.toString()}));
 
         verifyBothFirstSecond(
-                Collections.singletonList("a"),
+                Collections.singletonList("g"),
                 Arrays.asList("b", "c"),
                 Arrays.asList("d", "f"));
     }

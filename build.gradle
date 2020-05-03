@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'ch.uhlme'
-version '1.0-SNAPSHOT'
+version '1.0.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -17,6 +17,11 @@ dependencies {
     implementation('com.google.flogger:flogger-system-backend:0.5.1')
 }
 
+compileJava   {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+}
+
 test {
     useJUnitPlatform()
     testLogging {
@@ -26,7 +31,7 @@ test {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'Application'
+        attributes 'Main-Class': 'ch.uhlme.Application'
     }
 
     from {

@@ -2,6 +2,7 @@ package ch.uhlme;
 
 import ch.uhlme.commands.ExternalSortCommand;
 import ch.uhlme.commands.LineDiffCommand;
+import ch.uhlme.commands.SplitCommand;
 import ch.uhlme.utils.LogUtils;
 import com.google.common.flogger.FluentLogger;
 
@@ -35,6 +36,10 @@ public class Application {
             case "externalsort":
                 ExternalSortCommand sort = new ExternalSortCommand();
                 sort.run(args);
+                break;
+            case "split":
+                SplitCommand split = new SplitCommand();
+                split.run(args);
                 break;
             default:
                 throw new IllegalArgumentException(String.format("Specified command %s not found", command));

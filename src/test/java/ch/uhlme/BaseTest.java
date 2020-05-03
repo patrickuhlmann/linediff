@@ -32,7 +32,7 @@ public class BaseTest {
     }
 
     public void mkdirsOrFail(Path file) {
-        if (!file.toFile().mkdirs()) {
+        if (!file.toFile().exists() && !file.toFile().mkdirs()) {
             Assertions.fail(String.format("Unable to create directory %s", file));
         }
     }
