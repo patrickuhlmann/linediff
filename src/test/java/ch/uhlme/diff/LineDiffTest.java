@@ -1,8 +1,11 @@
+package ch.uhlme.diff;
+
+import ch.uhlme.BaseTest;
+import ch.uhlme.utils.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import utils.FileUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -21,27 +24,24 @@ public class LineDiffTest extends BaseTest {
 
     @Test
     @DisplayName("exception if any input or output is null")
-    public void exceptionIfArgumentsAreNull(@TempDir Path tempDir) throws IOException {
+    public void exceptionIfArgumentsAreNull() throws IOException {
         Path firstInput = tempDir.resolve("input1.txt");
-        firstInput.toFile().createNewFile();
+        createFileOrFail(firstInput);
         Path secondInput = tempDir.resolve("input2.txt");
-        secondInput.toFile().createNewFile();
+        createFileOrFail(secondInput);
         Path output = tempDir.resolve("output");
 
-        Assertions.assertThrows(NullPointerException.class, () -> {
-            new LineDiff(null, new InputFile(secondInput), new OutputFolder(output));
-        });
+        Assertions.assertThrows(NullPointerException.class,
+                () -> new LineDiff(null, new InputFile(secondInput), new OutputFolder(output)));
         FileUtils.deleteRecursive(output);
 
 
-        Assertions.assertThrows(NullPointerException.class, () -> {
-            new LineDiff(new InputFile(firstInput), null, new OutputFolder(output));
-        });
+        Assertions.assertThrows(NullPointerException.class,
+                () -> new LineDiff(new InputFile(firstInput), null, new OutputFolder(output)));
         FileUtils.deleteRecursive(output);
 
-        Assertions.assertThrows(NullPointerException.class, () -> {
-            new LineDiff(new InputFile(firstInput), new InputFile(secondInput), null);
-        });
+        Assertions.assertThrows(NullPointerException.class,
+                () -> new LineDiff(new InputFile(firstInput), new InputFile(secondInput), null));
 
         Assertions.assertDoesNotThrow(() -> {
             new LineDiff(new InputFile(firstInput), new InputFile(secondInput), new OutputFolder(output));
@@ -62,7 +62,7 @@ public class LineDiffTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("diff with empty second input")
+    @DisplayName("ch.uhlme.diff with empty second input")
     public void diffWithEmptySecondInput() throws IOException {
         runWithInputs(
                 Arrays.asList("a", "b"),
@@ -75,7 +75,7 @@ public class LineDiffTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("diff with empty first input")
+    @DisplayName("ch.uhlme.diff with empty first input")
     public void diffWithEmptyFirstInput() throws IOException {
         runWithInputs(
                 null,
@@ -88,7 +88,7 @@ public class LineDiffTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("diff both inputs middle")
+    @DisplayName("ch.uhlme.diff both inputs middle")
     public void diffBothInputsMiddle() throws IOException {
         runWithInputs(
                 Arrays.asList("a", "b", "d"),
@@ -101,7 +101,7 @@ public class LineDiffTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("diff both inputs start/end")
+    @DisplayName("ch.uhlme.diff both inputs start/end")
     public void diffBothInputsStartEnd() throws IOException {
         runWithInputs(
                 Arrays.asList("a", "c", "d"),
@@ -114,7 +114,7 @@ public class LineDiffTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("diff both inputs completely")
+    @DisplayName("ch.uhlme.diff both inputs completely")
     public void diffBothInputsCompletely() throws IOException {
         runWithInputs(
                 Arrays.asList("a", "c", "e"),
@@ -127,7 +127,7 @@ public class LineDiffTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("diff first large")
+    @DisplayName("ch.uhlme.diff first large")
     public void diffFirstLarge() throws IOException {
         runWithInputs(
                 Arrays.asList("a", "b", "c", "d", "e", "f"),
@@ -140,7 +140,7 @@ public class LineDiffTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("diff second large")
+    @DisplayName("ch.uhlme.diff second large")
     public void diffSecondLarge() throws IOException {
         runWithInputs(
                 Arrays.asList("a", "b", "f"),
@@ -153,7 +153,7 @@ public class LineDiffTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("diff duplicates")
+    @DisplayName("ch.uhlme.diff duplicates")
     public void diffDuplicates() throws IOException {
         runWithInputs(
                 Arrays.asList("a", "b", "b", "b", "c"),
@@ -166,7 +166,7 @@ public class LineDiffTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("diff empty lines")
+    @DisplayName("ch.uhlme.diff empty lines")
     public void diffEmptyLines() throws IOException {
         runWithInputs(
                 Arrays.asList("", "", "", "a", "b", "b", "b", "c"),
@@ -193,7 +193,7 @@ public class LineDiffTest extends BaseTest {
 
     private void createFile(Path file, List<String> content) throws IOException {
         if (content == null || content.size() == 0) {
-            file.toFile().createNewFile();
+            createFileOrFail(file);
         } else {
             Files.write(file, content, StandardCharsets.UTF_8);
         }

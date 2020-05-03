@@ -1,4 +1,4 @@
-package utils;
+package ch.uhlme.utils;
 
 import java.io.*;
 import java.nio.file.Path;

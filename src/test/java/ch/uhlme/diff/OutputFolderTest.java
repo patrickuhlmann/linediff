@@ -1,3 +1,7 @@
+package ch.uhlme.diff;
+
+import ch.uhlme.Application;
+import ch.uhlme.BaseTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,6 +11,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public class OutputFolderTest extends BaseTest {
+    @TempDir
+    Path tempDir;
+
     @Test
     @DisplayName("exception with empty path")
     public void exceptionWithEmptyFile() {
@@ -15,44 +22,39 @@ public class OutputFolderTest extends BaseTest {
 
     @Test
     @DisplayName("invalid an output file already exists")
-    public void invvalidIfExists(@TempDir Path tempDir) throws IOException {
+    public void invvalidIfExists() throws IOException {
         Path firstInput = tempDir.resolve("input1.txt");
-        firstInput.toFile().createNewFile();
+        createFileOrFail(firstInput);
 
         Path secondInput = tempDir.resolve("input2.txt");
-        secondInput.toFile().createNewFile();
+        createFileOrFail(secondInput);
 
         Path outputFolder = tempDir.resolve("output");
         Path output = tempDir.resolve("output/both.txt");
-        output.toFile().mkdirs();
-        output.toFile().createNewFile();
+        mkdirsOrFail(outputFolder);
+        createFileOrFail(output);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Application.main(new String[] { firstInput.toString(), secondInput.toString(), outputFolder.toString() });
-        });
-
-        output.toFile().delete();
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> Application.main(new String[]{"linediff", firstInput.toString(), secondInput.toString(), outputFolder.toString()}));
+        deleteFileOrFail(output);
 
         output = tempDir.resolve("output/first_only.txt");
-        output.toFile().createNewFile();
+        createFileOrFail(output);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Application.main(new String[] { firstInput.toString(), secondInput.toString(), outputFolder.toString() });
-        });
-
-        output.toFile().delete();
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> Application.main(new String[]{firstInput.toString(), secondInput.toString(), outputFolder.toString()}));
+        deleteFileOrFail(output);
 
         output = tempDir.resolve("output/second_only.txt");
-        output.toFile().createNewFile();
+        createFileOrFail(output);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Application.main(new String[] { firstInput.toString(), secondInput.toString(), outputFolder.toString() });
-        });
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> Application.main(new String[]{firstInput.toString(), secondInput.toString(), outputFolder.toString()}));
     }
 
     @Test
     @DisplayName("file is valid if it doesn't exist")
-    public void validIfEmpty(@TempDir Path tempDir) {
+    public void validIfEmpty() {
         Path filePath = tempDir.resolve("output");
 
         Assertions.assertDoesNotThrow(() -> {

@@ -1,13 +1,10 @@
-package utils;
+package ch.uhlme.utils;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +12,7 @@ import java.util.List;
 public class ByteCountTest {
     @Test
     @DisplayName("test all steps from bytes to lots of gigabytes")
-    public void bytesToLotsOfGigabytes(@TempDir Path tempDir) throws IOException {
+    public void bytesToLotsOfGigabytes(@TempDir Path tempDir) {
         List<Long> inputs = Arrays.asList(
                 512L,
                 1000L + 950L,

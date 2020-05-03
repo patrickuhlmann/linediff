@@ -1,4 +1,4 @@
-package utils;
+package ch.uhlme.utils;
 
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;

@@ -1,4 +1,8 @@
+package ch.uhlme.commands;
+
+import ch.uhlme.BaseTest;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -10,65 +14,63 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 
-public class ApplicationTest extends BaseTest {
+public class LineDiffCommandTest extends BaseTest {
     @TempDir
     Path tempDir;
+    LineDiffCommand diffCommand;
+
+    @BeforeEach
+    public void reinitalizeLineDiff() {
+        diffCommand = new LineDiffCommand();
+    }
 
     @Test
     @DisplayName("should throw an exception when called without arguments")
     public void noArguments() {
-        Assertions.assertThrows(NullPointerException.class, () -> {
-            Application.main(null);
-        });
+        Assertions.assertThrows(IllegalArgumentException.class, () -> diffCommand.run(null));
     }
 
     @Test
     @DisplayName("should throw an exception when called with a wrong number of arguments")
     public void wrongNumberOfArguments() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Application.main(new String[] { "1" });
-        });
+        Assertions.assertThrows(IllegalArgumentException.class, () -> diffCommand.run(new String[]{"1"}));
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Application.main(new String[] { "1", "2", "3", "4" });
-        });
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> diffCommand.run(new String[]{"1", "2", "3", "4"}));
     }
 
     @Test
     @DisplayName("should throw an exception if one of the input files does not exist")
     public void inputFilesMustExist() throws IOException {
         Path firstInput = tempDir.resolve("first.txt");
-        firstInput.toFile().createNewFile();
+        createFileOrFail(firstInput);
 
-        Assertions.assertThrows(FileNotFoundException.class, () -> {
-            Application.main(new String[] { "first.txt", "second.txt", "output.txt" });
-        });
+        Assertions.assertThrows(FileNotFoundException.class,
+                () -> diffCommand.run(new String[]{"first.txt", "second.txt", "output.txt"}));
 
-        Assertions.assertThrows(FileNotFoundException.class, () -> {
-            Application.main(new String[] { firstInput.toString(), "second.txt", "output.txt" });
-        });
+        Assertions.assertThrows(FileNotFoundException.class,
+                () -> diffCommand.run(new String[]{firstInput.toString(), "second.txt", "output.txt"}));
     }
 
     @Test
     @DisplayName("should throw an exception if the output folder already exists")
     public void outputFileMustNotExist() throws IOException {
         Path firstInput = tempDir.resolve("input1.txt");
-        firstInput.toFile().createNewFile();
+        createFileOrFail(firstInput);
 
         Path secondInput = tempDir.resolve("input2.txt");
-        secondInput.toFile().createNewFile();
+        createFileOrFail(secondInput);
 
         Path outputFolder = tempDir.resolve("output");
         Path output = tempDir.resolve("output/both.txt");
-        output.toFile().mkdirs();
-        output.toFile().createNewFile();
+        mkdirsOrFail(outputFolder);
+        createFileOrFail(output);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Application.main(new String[] { firstInput.toString(), secondInput.toString(), outputFolder.toString() });
-        });
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> diffCommand.run(new String[]{firstInput.toString(), secondInput.toString(), outputFolder.toString()}));
     }
 
     @Test
@@ -85,12 +87,11 @@ public class ApplicationTest extends BaseTest {
 
         Path output = tempDir.resolve("output");
 
-        Assertions.assertDoesNotThrow(() -> {
-            Application.main(new String[] { firstInput.toString(), secondInput.toString(), output.toString() });
-        });
+        Assertions.assertDoesNotThrow(
+                () -> diffCommand.run(new String[]{firstInput.toString(), secondInput.toString(), output.toString()}));
 
         verifyBothFirstSecond(
-                Arrays.asList("a"),
+                Collections.singletonList("a"),
                 Arrays.asList("b", "c"),
                 Arrays.asList("d", "f"));
     }

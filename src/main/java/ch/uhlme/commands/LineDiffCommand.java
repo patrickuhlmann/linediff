@@ -1,52 +1,60 @@
+package ch.uhlme.commands;
+
+import ch.uhlme.diff.InputFile;
+import ch.uhlme.diff.LineDiff;
+import ch.uhlme.diff.OutputFolder;
+import ch.uhlme.sorting.ExternalSort;
+import ch.uhlme.utils.FileUtils;
+import ch.uhlme.utils.Tuple;
 import com.google.common.flogger.FluentLogger;
-import utils.FileUtils;
-import utils.LogUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class Application {
+public class LineDiffCommand {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
-    static {
-        LogUtils.initalizeLogging("logging.properties");
-    }
-
-    public static void main(String[] args) throws Exception {
-        Application app = new Application();
-        app.run(args);
-    }
-
-    private void run(String[] args) throws Exception {
+    public void run(String[] args) throws Exception {
         logger.atInfo().log("started with %s", args);
 
-        if (args.length != 3) {
-            throw new IllegalArgumentException("Usage: <firstfile> <secondfile> <outputfolder>");
+        Tuple<Path, Path> inputFiles = this.verifyParameters(args);
+        this.runDiff(inputFiles.first, inputFiles.second, Paths.get(args[2]));
+
+        logger.atInfo().log("Process finished successfully");
+    }
+
+    private Tuple<Path, Path> verifyParameters(String[] args) throws IOException {
+        if (args == null || args.length != 3) {
+            throw new IllegalArgumentException("Usage: linediff <firstfile> <secondfile> <outputfolder>");
         }
 
-        System.out.println("Verifying parameters");
+        logger.atInfo().log("Verifying parameters");
 
         Path firstPath = sortInputFileIfNeeded(Paths.get(args[0]), Paths.get(args[2]));
         Path secondPath = sortInputFileIfNeeded(Paths.get(args[1]), Paths.get(args[2]));
 
+        return new Tuple<>(firstPath, secondPath);
+    }
+
+    private void runDiff(Path firstPath, Path secondPath, Path outputFolderPath) throws Exception {
         try (
                 InputFile firstFile = new InputFile(firstPath);
                 InputFile secondFile = new InputFile(secondPath);
-                OutputFolder outputFolder = new OutputFolder(Paths.get(args[2]))
+                OutputFolder outputFolder = new OutputFolder(outputFolderPath)
         ) {
             LineDiff diff = new LineDiff(firstFile, secondFile, outputFolder);
             diff.process();
-
-            System.out.println("Process finished successfully");
         }
     }
 
-    private static Path sortInputFileIfNeeded(Path input, Path output) throws IOException {
+    private Path sortInputFileIfNeeded(Path input, Path output) throws IOException {
         if (!FileUtils.areLinesInFileSorted(input)) {
             System.out.println(String.format("Input file %s is unsorted, sorting...", input));
-            output.toFile().mkdirs();
+            if (!output.toFile().mkdirs()) {
+                throw new IOException(String.format("Unable to create directory %s", output));
+            }
             ExternalSort sort = new ExternalSort();
             Path sortedInput = Paths.get(output.toAbsolutePath() + File.separator + "sorted_" + input.getFileName());
             if (sortedInput.toFile().exists()) {

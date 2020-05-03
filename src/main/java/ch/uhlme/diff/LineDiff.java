@@ -1,3 +1,5 @@
+package ch.uhlme.diff;
+
 import java.io.IOException;
 import java.util.Objects;
 
@@ -29,7 +31,8 @@ public class LineDiff {
                 this.output.addBothLine(firstInputLine);
                 firstInputLine = this.firstInput.getNextUniqueLine();
                 secondInputLine = this.secondInput.getNextUniqueLine();
-            } if (result > 0) {
+            }
+            if (result > 0) {
                 this.output.addOnlySecondLine(secondInputLine);
                 secondInputLine = this.secondInput.getNextUniqueLine();
             }

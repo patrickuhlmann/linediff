@@ -1,13 +1,14 @@
-// based on Public Domain Code from https://www.ashishsharma.me/2011/08/external-merge-sort.html
+package ch.uhlme.sorting;// based on Public Domain Code from https://www.ashishsharma.me/2011/08/external-merge-sort.html
+
+import ch.uhlme.utils.ByteCount;
+import com.google.common.flogger.FluentLogger;
+
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.io.*;
 import java.util.concurrent.TimeUnit;
-
-import com.google.common.flogger.FluentLogger;
-import utils.ByteCount;
 
 public class ExternalSort {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
@@ -27,13 +28,13 @@ public class ExternalSort {
 
         logger.atFine().log("sort with input %s, output %s", input, output);
 
-        List<Path> l = splitFilesAndSort(input) ;
+        List<Path> l = splitFilesAndSort(input);
         mergeSortedFiles(l, output);
     }
 
     private List<Path> splitFilesAndSort(Path file) throws IOException {
         logger.atFine().log("Input file size %s", new ByteCount(file.toFile().length()));
-        
+
         List<Path> splitedFiles = new ArrayList<>();
         try (BufferedReader fbr = new BufferedReader(new FileReader(file.toFile()))) {
             List<String> lines = new ArrayList<>();
@@ -55,12 +56,7 @@ public class ExternalSort {
             } catch (EOFException oef) {
                 logger.atFine().log("EOF Exception");
                 if (lines.size() > 0) {
-                    if (lines.size() == 0) {
-                        logger.atInfo().log("2saving empty lines");
-                    }
-                    if (lines.size() > 0) {
-                        splitedFiles.add(sortAndSave(lines));
-                    }
+                    splitedFiles.add(sortAndSave(lines));
                     lines.clear();
                 }
             }
@@ -69,7 +65,7 @@ public class ExternalSort {
         return splitedFiles;
     }
 
-    private Path sortAndSave(List<String> lines) throws IOException  {
+    private Path sortAndSave(List<String> lines) throws IOException {
         lines.sort(String::compareTo);
         File file = File.createTempFile("linediff_", "_flatfile");
         file.deleteOnExit();
@@ -102,7 +98,9 @@ public class ExternalSort {
                 fbw.newLine();
                 if (bfb.empty()) {
                     bfb.fbr.close();
-                    bfb.originalFile.delete();
+                    if (!bfb.originalFile.delete()) {
+                        logger.atWarning().log("Unable to delete temporary file %s", bfb.originalFile);
+                    }
                 } else {
                     pq.add(bfb);
                 }
@@ -112,7 +110,7 @@ public class ExternalSort {
         }
     }
 
-    static class BinaryFileBuffer  {
+    static class BinaryFileBuffer {
         private final BufferedReader fbr;
         private final File originalFile;
         private String cache;
@@ -131,7 +129,7 @@ public class ExternalSort {
         private void reload() throws IOException {
             try {
                 empty = (this.cache = fbr.readLine()) == null;
-            } catch(EOFException oef) {
+            } catch (EOFException oef) {
                 empty = true;
                 cache = null;
             }
@@ -142,9 +140,10 @@ public class ExternalSort {
         }
 
         public String peek() {
-            if(empty()) return null;
+            if (empty()) return null;
             return cache;
         }
+
         public String pop() throws IOException {
             String answer = peek();
             reload();

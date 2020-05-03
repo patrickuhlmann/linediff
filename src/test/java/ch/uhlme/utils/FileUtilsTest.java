@@ -1,5 +1,6 @@
-package utils;
+package ch.uhlme.utils;
 
+import ch.uhlme.BaseTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,12 +9,11 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
-public class FileUtilsTest {
+public class FileUtilsTest extends BaseTest {
     @TempDir
     Path tempDir;
 
@@ -43,7 +43,7 @@ public class FileUtilsTest {
     @DisplayName("recursive deletion with file")
     public void deleteRecursiveFile() throws IOException {
         Path filePath = tempDir.resolve("input1.txt");
-        filePath.toFile().createNewFile();
+        createFileOrFail(filePath);
 
         FileUtils.deleteRecursive(filePath);
 
@@ -52,9 +52,9 @@ public class FileUtilsTest {
 
     @Test
     @DisplayName("recursive deletion with folder")
-    public void deleteRecursiveFolder() throws IOException {
+    public void deleteRecursiveFolder() {
         Path filePath = tempDir.resolve("input");
-        filePath.toFile().mkdir();
+        mkdirsOrFail(filePath);
 
         FileUtils.deleteRecursive(filePath);
 
@@ -66,9 +66,10 @@ public class FileUtilsTest {
     public void deleteRecursiveStructure() throws IOException {
         Path filePath = tempDir.resolve("input");
 
+        Path secondFolder = tempDir.resolve("input/other/other");
         Path secondFile = tempDir.resolve("input/other/other/file.txt");
-        secondFile.toFile().mkdirs();
-        secondFile.toFile().createNewFile();
+        mkdirsOrFail(secondFolder);
+        createFileOrFail(secondFile);
 
         FileUtils.deleteRecursive(filePath);
 
@@ -88,21 +89,19 @@ public class FileUtilsTest {
 
     @Test
     @DisplayName("throw exception if generate file is null")
-    public void generateFileWithRandomLinesNull() throws IOException {
+    public void generateFileWithRandomLinesNull() {
         Path filePath = tempDir.resolve("out.txt");
 
-        Assertions.assertThrows(NullPointerException.class, () -> {
-            FileUtils.generateFileWithRandomLines(null, 10);
-        });
+        Assertions.assertThrows(NullPointerException.class,
+                () -> FileUtils.generateFileWithRandomLines(null, 10));
     }
 
     @Test
     @DisplayName("throw exception if generate with negative number")
-    public void generateFileWithRandomLinesNegative() throws IOException {
+    public void generateFileWithRandomLinesNegative() {
         Path filePath = tempDir.resolve("out.txt");
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            FileUtils.generateFileWithRandomLines(filePath, -10);
-        });
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> FileUtils.generateFileWithRandomLines(filePath, -10));
     }
 }
