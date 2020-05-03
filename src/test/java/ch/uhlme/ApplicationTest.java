@@ -105,6 +105,21 @@ public class ApplicationTest extends BaseTest {
         verifyFile(output, outputLines);
     }
 
+    @Test
+    @DisplayName("url decode")
+    public void urlDecode() throws Exception {
+        List<String> inputLines = Collections.singletonList("%C3%9Cber");
+        List<String> outputLines = Collections.singletonList("Über");
+
+        Path input = tempDir.resolve("input.txt");
+        Files.write(input, inputLines, StandardCharsets.UTF_8);
+        Path output = tempDir.resolve("output.txt");
+
+        Application.main(new String[]{"decodeurl", input.toString(), output.toString()});
+
+        verifyFile(output, outputLines);
+    }
+
     private void verifyFile(Path file, List<String> elements) throws IOException {
         List<String> lines = Files.readAllLines(file);
         Assertions.assertEquals(elements.size(), lines.size());

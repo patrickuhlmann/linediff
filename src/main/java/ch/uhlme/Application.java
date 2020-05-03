@@ -1,9 +1,6 @@
 package ch.uhlme;
 
-import ch.uhlme.commands.ExternalSortCommand;
-import ch.uhlme.commands.LineDiffCommand;
-import ch.uhlme.commands.ReplaceCommand;
-import ch.uhlme.commands.SplitCommand;
+import ch.uhlme.commands.*;
 import ch.uhlme.utils.LogUtils;
 import com.google.common.flogger.FluentLogger;
 
@@ -23,7 +20,7 @@ public class Application {
 
     public static void main(String[] args) throws Exception {
         if (args == null || args.length < 1) {
-            throw new IllegalArgumentException("No command specified. Available commands: linediff, externalsort, split and replace");
+            throw new IllegalArgumentException("No command specified. Available commands: linediff, externalsort, split, decodeurl and replace");
         }
 
         String command = args[0];
@@ -45,6 +42,10 @@ public class Application {
             case "replace":
                 ReplaceCommand replace = new ReplaceCommand();
                 replace.run(args);
+                break;
+            case "decodeurl":
+                DecodeURLCommand decodeURL = new DecodeURLCommand();
+                decodeURL.run(args);
                 break;
             default:
                 throw new IllegalArgumentException(String.format("Specified command %s not found", command));

@@ -1,30 +1,31 @@
 package ch.uhlme.commands;
 
-import ch.uhlme.utils.Quadruple;
+import ch.uhlme.utils.Tuple;
 import com.google.common.flogger.FluentLogger;
 
 import java.io.*;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Objects;
 
-public class ReplaceCommand {
+public class DecodeURLCommand {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
     public void run(String[] args) throws Exception {
         logger.atInfo().log("started with %s", args);
 
-        Quadruple<Path, Path, String, String> arguments = verifyParameters(args);
+        Tuple<Path, Path> arguments = verifyParameters(args);
 
-        replace(arguments.first, arguments.second, arguments.third, arguments.fourth);
+        decode(arguments.first, arguments.second);
 
         logger.atInfo().log("Process finished successfully");
     }
 
-    private Quadruple<Path, Path, String, String> verifyParameters(String[] args) throws FileNotFoundException, FileAlreadyExistsException {
-        if (args == null || args.length != 4) {
-            throw new IllegalArgumentException("usage: replace <input> <output> <searchPattern> <replacePattern>");
+    private Tuple<Path, Path> verifyParameters(String[] args) throws FileNotFoundException, FileAlreadyExistsException {
+        if (args == null || args.length != 2) {
+            throw new IllegalArgumentException("usage: decodeurl <input> <output>");
         }
 
         Path input = Paths.get(args[0]);
@@ -37,19 +38,17 @@ public class ReplaceCommand {
             throw new FileAlreadyExistsException(String.format("the output file %s mustn't exist", output));
         }
 
-        return new Quadruple<>(input, output, args[2], args[3]);
+        return new Tuple<>(input, output);
     }
 
-    private void replace(Path input, Path output, String searchPattern, String replacePattern) throws IOException {
-        Objects.requireNonNull(searchPattern);
-        Objects.requireNonNull(replacePattern);
+    private void decode(Path input, Path output) throws IOException {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(input.toFile()));
              BufferedWriter writer = new BufferedWriter(new FileWriter(output.toFile()))) {
 
             String currentLine;
             while ((currentLine = reader.readLine()) != null) {
-                String replaced = currentLine.replaceAll(searchPattern, replacePattern);
+                String replaced = URLDecoder.decode(currentLine, StandardCharsets.UTF_8.name());
                 writer.write(replaced);
                 writer.newLine();
             }
