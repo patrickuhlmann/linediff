@@ -90,6 +90,21 @@ public class ApplicationTest extends BaseTest {
         verifyFile(output2, Collections.singletonList("c"));
     }
 
+    @Test
+    @DisplayName("replace")
+    public void replaceNormal() throws Exception {
+        List<String> inputLines = Arrays.asList("test 123 test", "main 123 main");
+        List<String> outputLines = Arrays.asList("test test", "main main");
+
+        Path input = tempDir.resolve("input.txt");
+        Files.write(input, inputLines, StandardCharsets.UTF_8);
+        Path output = tempDir.resolve("output.txt");
+
+        Application.main(new String[]{"replace", input.toString(), output.toString(), "\\s[0-9]*\\s", " "});
+
+        verifyFile(output, outputLines);
+    }
+
     private void verifyFile(Path file, List<String> elements) throws IOException {
         List<String> lines = Files.readAllLines(file);
         Assertions.assertEquals(elements.size(), lines.size());
