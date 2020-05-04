@@ -3,10 +3,14 @@ package ch.uhlme.commands;
 import ch.uhlme.utils.Tuple;
 import com.google.common.flogger.FluentLogger;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -29,12 +33,12 @@ public class DecodeURLCommand {
         }
 
         Path input = Paths.get(args[0]);
-        if (!input.toFile().exists()) {
+        if (!Files.exists(input)) {
             throw new FileNotFoundException(String.format("the input file %s can't be found", input));
         }
 
         Path output = Paths.get(args[1]);
-        if (output.toFile().exists()) {
+        if (Files.exists(output)) {
             throw new FileAlreadyExistsException(String.format("the output file %s mustn't exist", output));
         }
 
@@ -43,8 +47,8 @@ public class DecodeURLCommand {
 
     private void decode(Path input, Path output) throws IOException {
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(input.toFile()));
-             BufferedWriter writer = new BufferedWriter(new FileWriter(output.toFile()))) {
+        try (BufferedReader reader = Files.newBufferedReader(input, StandardCharsets.UTF_8);
+             BufferedWriter writer = Files.newBufferedWriter(output, StandardCharsets.UTF_8)) {
 
             String currentLine;
             while ((currentLine = reader.readLine()) != null) {

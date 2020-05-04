@@ -5,6 +5,7 @@ import ch.uhlme.utils.Tuple;
 import com.google.common.flogger.FluentLogger;
 
 import java.io.FileNotFoundException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -28,7 +29,7 @@ public class SplitCommand {
         }
 
         Path input = Paths.get(args[0]);
-        if (!input.toFile().exists()) {
+        if (!Files.exists(input)) {
             throw new FileNotFoundException(String.format("the input file %s can't be found", input));
         }
 

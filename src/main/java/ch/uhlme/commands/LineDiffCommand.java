@@ -10,6 +10,7 @@ import com.google.common.flogger.FluentLogger;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -52,12 +53,12 @@ public class LineDiffCommand {
     private Path sortInputFileIfNeeded(Path input, Path output) throws IOException {
         if (!FileUtils.areLinesInFileSorted(input)) {
             System.out.println(String.format("Input file %s is unsorted, sorting...", input));
-            if (!output.toFile().exists() && !output.toFile().mkdirs()) {
+            if (!Files.exists(output) && Files.createDirectories(output) == null) {
                 throw new IOException(String.format("Unable to create directory %s", output));
             }
             ExternalSort sort = new ExternalSort();
             Path sortedInput = Paths.get(output.toAbsolutePath() + File.separator + "sorted_" + input.getFileName());
-            if (sortedInput.toFile().exists()) {
+            if (Files.exists(sortedInput)) {
                 throw new IllegalArgumentException(String.format("Input file %s is unsorted and a sorted copy in the output folder can't be created, file already exists", input));
             }
             sort.sort(input, sortedInput);

@@ -53,7 +53,7 @@ public class FileUtilsTest extends BaseTest {
 
     @Test
     @DisplayName("recursive deletion with folder")
-    public void deleteRecursiveFolder() {
+    public void deleteRecursiveFolder() throws IOException {
         Path filePath = tempDir.resolve("input");
         mkdirsOrFail(filePath);
 

@@ -33,10 +33,10 @@ public class ExternalSort {
     }
 
     private List<Path> splitFilesAndSort(Path file) throws IOException {
-        logger.atFine().log("Input file size %s", new ByteCount(file.toFile().length()));
+        logger.atFine().log("Input file size %s", new ByteCount(Files.size(file)));
 
         List<Path> splitedFiles = new ArrayList<>();
-        try (BufferedReader fbr = new BufferedReader(new FileReader(file.toFile()))) {
+        try (BufferedReader fbr = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
             List<String> lines = new ArrayList<>();
             String currentLine = "";
             try {
@@ -86,11 +86,11 @@ public class ExternalSort {
 
         for (Path f : files) {
             logger.atFinest().log("create reader for file %s", f);
-            BinaryFileBuffer bfb = new BinaryFileBuffer(f.toFile());
+            BinaryFileBuffer bfb = new BinaryFileBuffer(f);
             pq.add(bfb);
         }
 
-        try (BufferedWriter fbw = new BufferedWriter(new FileWriter(outputfile.toFile()))) {
+        try (BufferedWriter fbw = Files.newBufferedWriter(outputfile, StandardCharsets.UTF_8)) {
             while (pq.size() > 0) {
                 BinaryFileBuffer bfb = pq.poll();
                 String r = bfb.pop();
@@ -98,7 +98,7 @@ public class ExternalSort {
                 fbw.newLine();
                 if (bfb.empty()) {
                     bfb.fbr.close();
-                    if (!bfb.originalFile.delete()) {
+                    if (Files.deleteIfExists(bfb.originalFile)) {
                         logger.atWarning().log("Unable to delete temporary file %s", bfb.originalFile);
                     }
                 } else {
@@ -112,13 +112,13 @@ public class ExternalSort {
 
     static class BinaryFileBuffer {
         private final BufferedReader fbr;
-        private final File originalFile;
+        private final Path originalFile;
         private String cache;
         private boolean empty;
 
-        public BinaryFileBuffer(File f) throws IOException {
+        public BinaryFileBuffer(Path f) throws IOException {
             originalFile = f;
-            fbr = new BufferedReader(new FileReader(f));
+            fbr = Files.newBufferedReader(f, StandardCharsets.UTF_8);
             reload();
         }
 

@@ -3,8 +3,12 @@ package ch.uhlme.split;
 import ch.uhlme.utils.FileUtils;
 import com.google.common.flogger.FluentLogger;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -24,7 +28,7 @@ public class Split {
     }
 
     public void split() throws IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile.toFile()))) {
+        try (BufferedReader reader = Files.newBufferedReader(inputFile, StandardCharsets.UTF_8)) {
             String currentLine;
             while ((currentLine = reader.readLine()) != null) {
                 processLine(currentLine);
@@ -61,12 +65,12 @@ public class Split {
         if (writer != null) {
             writer.close();
         }
-        writer = new BufferedWriter(new FileWriter(output.toFile()));
+        writer = Files.newBufferedWriter(output, StandardCharsets.UTF_8);
     }
 
     private Path getOutputFile() throws FileAlreadyExistsException {
         Path outputFile = FileUtils.getPathWithSuffixInFilename(inputFile, "_" + fileNumber);
-        if (outputFile.toFile().exists()) {
+        if (Files.exists(outputFile)) {
             throw new FileAlreadyExistsException(String.format("the output file %s already exists", outputFile));
         }
         fileNumber++;

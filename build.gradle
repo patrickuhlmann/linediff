@@ -1,7 +1,10 @@
+import com.github.spotbugs.snom.SpotBugsReport
+
 plugins {
     id 'java'
     id 'jacoco'
     id "org.sonarqube" version "2.8"
+    id "com.github.spotbugs" version "4.0.8"
 }
 
 group 'ch.uhlme'
@@ -54,4 +57,17 @@ sonarqube {
     properties {
         property "sonar.projectKey", "patrickuhlmann_linedifference"
     }
+}
+
+spotbugs {
+    //noinspection GrFinalVariableAccess
+    ignoreFailures = false as Property<Boolean>
+}
+
+spotbugsMain {
+    reports(({
+        html {
+            enabled = true
+        }
+    } as Closure<NamedDomainObjectContainer<? extends SpotBugsReport>>))
 }

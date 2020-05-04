@@ -6,10 +6,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +29,7 @@ public class InputFileTest extends BaseTest {
     public void invvalidIfNotExists() {
         Path filePath = tempDir.resolve("input1.txt");
 
-        Assertions.assertThrows(FileNotFoundException.class, () -> new InputFile(filePath));
+        Assertions.assertThrows(NoSuchFileException.class, () -> new InputFile(filePath));
     }
 
     @Test
