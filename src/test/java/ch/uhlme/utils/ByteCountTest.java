@@ -27,7 +27,7 @@ public class ByteCountTest {
                 -2 * 1000 * 1000 * 1000 * 1000L
         );
 
-        List<String> outputs = Arrays.asList(
+        List<String> outputs = Arrays.asList( // NOPMD
                 "512 B",
                 "2.0 kB",
                 "2.0 kB",
@@ -44,6 +44,7 @@ public class ByteCountTest {
         for (int i=0; i<inputs.size(); i++) {
             ByteCount bc = new ByteCount(inputs.get(i));
             Assertions.assertEquals(outputs.get(i), bc.toString());
+            Assertions.assertEquals(inputs.get(i), bc.getCount());
         }
     }
 }

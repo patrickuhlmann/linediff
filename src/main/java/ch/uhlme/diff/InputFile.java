@@ -8,8 +8,8 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 public class InputFile implements AutoCloseable {
-    private final BufferedReader reader;
-    private String previousLine = null;
+    private final transient BufferedReader reader;
+    private transient String previousLine = null;
 
     public InputFile(Path inputFile) throws IOException {
         Objects.requireNonNull(inputFile);

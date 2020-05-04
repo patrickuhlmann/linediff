@@ -18,9 +18,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class LineDiffCommandTest extends BaseTest {
+    @SuppressWarnings("unused")
     @TempDir
-    Path tempDir;
-    LineDiffCommand diffCommand;
+    transient Path tempDir;
+    private transient LineDiffCommand diffCommand;
 
     @BeforeEach
     public void reinitalizeLineDiff() {
@@ -85,7 +86,7 @@ public class LineDiffCommandTest extends BaseTest {
         Path secondInput = tempDir.resolve("input2.txt");
         Files.write(secondInput, secondInputLines, StandardCharsets.UTF_8);
 
-        Path output = tempDir.resolve("output");
+        Path output = tempDir.resolve("output"); // NOPMD
 
         Assertions.assertDoesNotThrow(
                 () -> diffCommand.run(new String[]{firstInput.toString(), secondInput.toString(), output.toString()}));

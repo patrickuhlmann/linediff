@@ -11,8 +11,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public class OutputFolderTest extends BaseTest {
+    @SuppressWarnings("unused")
     @TempDir
-    Path tempDir;
+    transient Path tempDir;
 
     @Test
     @DisplayName("exception with empty path")

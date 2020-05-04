@@ -18,7 +18,7 @@ public class ExternalSortCommand {
         Tuple<Path, Path> paths = verifyParameters(args);
 
         ExternalSort sort = new ExternalSort();
-        sort.sort(paths.first, paths.second);
+        sort.sort(paths.getFirst(), paths.getSecond());
 
         logger.atInfo().log("Process finished successfully");
     }

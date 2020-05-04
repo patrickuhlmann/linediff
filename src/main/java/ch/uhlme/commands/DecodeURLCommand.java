@@ -22,7 +22,7 @@ public class DecodeURLCommand {
 
         Tuple<Path, Path> arguments = verifyParameters(args);
 
-        decode(arguments.first, arguments.second);
+        decode(arguments.getFirst(), arguments.getSecond());
 
         logger.atInfo().log("Process finished successfully");
     }
@@ -50,11 +50,12 @@ public class DecodeURLCommand {
         try (BufferedReader reader = Files.newBufferedReader(input, StandardCharsets.UTF_8);
              BufferedWriter writer = Files.newBufferedWriter(output, StandardCharsets.UTF_8)) {
 
-            String currentLine;
-            while ((currentLine = reader.readLine()) != null) {
+            String currentLine = reader.readLine();
+            while (currentLine != null) {
                 String replaced = URLDecoder.decode(currentLine, StandardCharsets.UTF_8.name());
                 writer.write(replaced);
                 writer.newLine();
+                currentLine = reader.readLine();
             }
         }
     }

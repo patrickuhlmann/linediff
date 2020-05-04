@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class LineDiff {
-    private final InputFile firstInput;
-    private final InputFile secondInput;
-    private final OutputFolder output;
+    private transient final InputFile firstInput;
+    private transient final InputFile secondInput;
+    private transient final OutputFolder output;
 
     public LineDiff(InputFile firstInput, InputFile secondInput, OutputFolder output) {
         Objects.requireNonNull(firstInput);

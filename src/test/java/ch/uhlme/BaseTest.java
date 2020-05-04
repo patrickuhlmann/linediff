@@ -1,20 +1,16 @@
 package ch.uhlme;
 
 import ch.uhlme.utils.LogUtils;
-import com.google.common.flogger.FluentLogger;
 import org.junit.jupiter.api.Assertions;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 
 public class BaseTest {
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-
     static {
         try {
             LogUtils.initalizeLogging("logging.properties");
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

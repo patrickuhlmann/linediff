@@ -4,7 +4,7 @@ import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 
 public class ByteCount {
-    private long count;
+    private final transient long count;
 
     public ByteCount(long count) {
         this.count = count;
@@ -12,14 +12,20 @@ public class ByteCount {
 
     @Override
     public String toString() {
-        if (-1000 < count && count < 1000) {
-            return count + " B";
+        long tempCount = count;
+
+        if (-1000 < count && tempCount < 1000) {
+            return tempCount + " B";
         }
         CharacterIterator ci = new StringCharacterIterator("kMGTPE");
-        while (count <= -999_950 || count >= 999_950) {
-            count /= 1000.0;
+        while (tempCount <= -999_950 || tempCount >= 999_950) {
+            tempCount /= 1000.0;
             ci.next();
         }
-        return String.format("%.1f %cB", count / 1000.0, ci.current());
+        return String.format("%.1f %cB", tempCount / 1000.0, ci.current());
+    }
+
+    public long getCount() {
+        return count;
     }
 }

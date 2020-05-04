@@ -14,11 +14,11 @@ import java.util.Objects;
 
 public class Split {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-    private final Path inputFile;
-    private final int maxLinesPerFile;
-    private int fileNumber = 1;
-    private BufferedWriter writer = null;
-    private int linesInCurrentFile = 0;
+    private transient final Path inputFile;
+    private transient final int maxLinesPerFile;
+    private transient int fileNumber = 1;
+    private transient BufferedWriter writer = null;
+    private transient int linesInCurrentFile = 0;
 
     public Split(Path input, int maxLinesPerFile) {
         Objects.requireNonNull(input);
@@ -29,9 +29,10 @@ public class Split {
 
     public void split() throws IOException {
         try (BufferedReader reader = Files.newBufferedReader(inputFile, StandardCharsets.UTF_8)) {
-            String currentLine;
-            while ((currentLine = reader.readLine()) != null) {
+            String currentLine = reader.readLine();
+            while (currentLine != null) {
                 processLine(currentLine);
+                currentLine = reader.readLine();
             }
         } finally {
             if (writer != null) {

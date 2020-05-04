@@ -17,7 +17,7 @@ public class SplitCommand {
 
         Tuple<Path, Integer> arguments = verifyParameters(args);
 
-        Split split = new Split(arguments.first, arguments.second);
+        Split split = new Split(arguments.getFirst(), arguments.getSecond());
         split.split();
 
         logger.atInfo().log("Process finished successfully");
@@ -35,7 +35,7 @@ public class SplitCommand {
 
         int lines;
         try {
-            lines = Integer.parseInt(args[1]);
+            lines = Integer.parseInt(args[1]); //NOPMD
         } catch (NumberFormatException nfe) {
             throw new IllegalArgumentException("The number of lines must be a positive number");
         }

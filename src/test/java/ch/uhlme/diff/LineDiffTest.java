@@ -18,9 +18,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class LineDiffTest extends BaseTest {
-
+    @SuppressWarnings("unused")
     @TempDir
-    Path tempDir;
+    transient Path tempDir;
 
     @Test
     @DisplayName("exception if any input or output is null")

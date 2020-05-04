@@ -32,14 +32,14 @@ public class FileUtils {
         Objects.requireNonNull(path);
 
         try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-            String previousLine = "";
+            String previousLine = ""; // NOPMD
             String currentLine = br.readLine();
             while (currentLine != null) {
                 if (previousLine.compareTo(currentLine) > 0) {
                     return false;
                 }
 
-                previousLine = currentLine;
+                previousLine = currentLine; // NOPMD
                 currentLine = br.readLine();
             }
         }

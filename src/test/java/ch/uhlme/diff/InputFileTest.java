@@ -15,8 +15,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class InputFileTest extends BaseTest {
+    private final static String INPUT_FILENAME = "input.txt";
+    @SuppressWarnings("unused")
     @TempDir
-    Path tempDir;
+    transient Path tempDir;
 
     @Test
     @DisplayName("exception with empty file")
@@ -27,7 +29,7 @@ public class InputFileTest extends BaseTest {
     @Test
     @DisplayName("file is invalid if not exists")
     public void invvalidIfNotExists() {
-        Path filePath = tempDir.resolve("input1.txt");
+        Path filePath = tempDir.resolve(INPUT_FILENAME);  // NOPMD
 
         Assertions.assertThrows(NoSuchFileException.class, () -> new InputFile(filePath));
     }
@@ -35,7 +37,7 @@ public class InputFileTest extends BaseTest {
     @Test
     @DisplayName("file is valid if empty")
     public void validIfEmpty() throws IOException {
-        Path filePath = tempDir.resolve("input1.txt");
+        Path filePath = tempDir.resolve(INPUT_FILENAME);
         createFileOrFail(filePath);
 
         Assertions.assertDoesNotThrow(() -> {
@@ -48,7 +50,7 @@ public class InputFileTest extends BaseTest {
     public void validIfSorted() throws IOException {
         List<String> sortedLines = Arrays.asList("abc", "def");
 
-        Path filePath = tempDir.resolve("input1.txt");
+        Path filePath = tempDir.resolve(INPUT_FILENAME);
         Files.write(filePath, sortedLines, StandardCharsets.UTF_8);
 
         Assertions.assertDoesNotThrow(() -> {
@@ -61,7 +63,7 @@ public class InputFileTest extends BaseTest {
     public void invalidIfNotSorted() throws IOException {
         List<String> unsortedLines = Arrays.asList("def", "abc");
 
-        Path filePath = tempDir.resolve("input1.txt");
+        Path filePath = tempDir.resolve(INPUT_FILENAME);
         Files.write(filePath, unsortedLines, StandardCharsets.UTF_8);
 
         Assertions.assertDoesNotThrow(() -> {
