@@ -17,9 +17,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class DecodeURLCommandTest extends BaseTest {
+    private final static String INPUT_FILENAME = "input.txt";
+    @SuppressWarnings("unused")
     @TempDir
-    Path tempDir;
-    DecodeURLCommand decodeURLCommand;
+    transient Path tempDir;
+    private transient DecodeURLCommand decodeURLCommand;
 
     @BeforeEach
     public void reinitalize() {
@@ -35,7 +37,7 @@ public class DecodeURLCommandTest extends BaseTest {
     @Test
     @DisplayName("should throw an exception when called with a wrong number of arguments")
     public void wrongNumberOfArguments() throws IOException {
-        Path input = tempDir.resolve("input.txt");
+        Path input = tempDir.resolve(INPUT_FILENAME);
         createFileOrFail(input);
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> decodeURLCommand.run(new String[]{input.toString()}));
@@ -47,7 +49,7 @@ public class DecodeURLCommandTest extends BaseTest {
     @Test
     @DisplayName("should throw an exception if the input file does not exist")
     public void inputFileMustExist() {
-        Path input = tempDir.resolve("input.txt");
+        Path input = tempDir.resolve(INPUT_FILENAME); // NOPMD
 
         Assertions.assertThrows(FileNotFoundException.class,
                 () -> decodeURLCommand.run(new String[]{input.toString(), "2"}));
@@ -56,7 +58,7 @@ public class DecodeURLCommandTest extends BaseTest {
     @Test
     @DisplayName("should throw an exception if the output file does already exist")
     public void outputFileMustntExist() throws IOException {
-        Path input = tempDir.resolve("input.txt");
+        Path input = tempDir.resolve(INPUT_FILENAME);
         createFileOrFail(input);
 
         Path output = tempDir.resolve("output.txt");
@@ -72,7 +74,7 @@ public class DecodeURLCommandTest extends BaseTest {
         List<String> inputLines = Collections.singletonList("%C3%9Cber");
         List<String> outputLines = Collections.singletonList("Über");
 
-        Path input = tempDir.resolve("input.txt");
+        Path input = tempDir.resolve(INPUT_FILENAME);
         Files.write(input, inputLines, StandardCharsets.UTF_8);
         Path output = tempDir.resolve("output.txt");
 

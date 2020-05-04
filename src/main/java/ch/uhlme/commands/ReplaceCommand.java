@@ -22,7 +22,7 @@ public class ReplaceCommand {
 
         Quadruple<Path, Path, String, String> arguments = verifyParameters(args);
 
-        replace(arguments.first, arguments.second, arguments.third, arguments.fourth);
+        replace(arguments.getFirst(), arguments.getSecond(), arguments.getThird(), arguments.getFourth());
 
         logger.atInfo().log("Process finished successfully");
     }
@@ -52,11 +52,12 @@ public class ReplaceCommand {
         try (BufferedReader reader = Files.newBufferedReader(input, StandardCharsets.UTF_8);
              BufferedWriter writer = Files.newBufferedWriter(output, StandardCharsets.UTF_8)) {
 
-            String currentLine;
-            while ((currentLine = reader.readLine()) != null) {
+            String currentLine = reader.readLine();
+            while (currentLine != null) {
                 String replaced = currentLine.replaceAll(searchPattern, replacePattern);
                 writer.write(replaced);
                 writer.newLine();
+                currentLine = reader.readLine();
             }
         }
     }

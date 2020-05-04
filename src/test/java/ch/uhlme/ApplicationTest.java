@@ -15,8 +15,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class ApplicationTest extends BaseTest {
+    private static final String INPUT_FILENAME = "input.txt";
+    @SuppressWarnings("unused")
     @TempDir
-    Path tempDir;
+    transient Path tempDir;
 
     @Test
     @DisplayName("should throw an exception when called with null arguments")
@@ -46,7 +48,7 @@ public class ApplicationTest extends BaseTest {
         Path secondInput = tempDir.resolve("input2.txt");
         Files.write(secondInput, secondInputLines, StandardCharsets.UTF_8);
 
-        Path output = tempDir.resolve("output");
+        Path output = tempDir.resolve("output"); // NOPMD
 
         Assertions.assertDoesNotThrow(
                 () -> Application.main(new String[]{"linediff", firstInput.toString(), secondInput.toString(), output.toString()}));
@@ -62,7 +64,7 @@ public class ApplicationTest extends BaseTest {
     public void externalSortCommand() throws IOException {
         List<String> inputLines = Arrays.asList("d", "a", "f");
 
-        Path input = tempDir.resolve("input.txt");
+        Path input = tempDir.resolve(INPUT_FILENAME);
         Files.write(input, inputLines, StandardCharsets.UTF_8);
 
         Path output = tempDir.resolve("output.txt");
@@ -78,7 +80,7 @@ public class ApplicationTest extends BaseTest {
     public void regularExecutionWithSplit() throws IOException {
         List<String> inputLines = Arrays.asList("a", "b", "c");
 
-        Path input = tempDir.resolve("input.txt");
+        Path input = tempDir.resolve(INPUT_FILENAME);
         Files.write(input, inputLines, StandardCharsets.UTF_8);
 
         Assertions.assertDoesNotThrow(() -> Application.main(new String[]{"split", input.toString(), "2"}));
@@ -96,7 +98,7 @@ public class ApplicationTest extends BaseTest {
         List<String> inputLines = Arrays.asList("test 123 test", "main 123 main");
         List<String> outputLines = Arrays.asList("test test", "main main");
 
-        Path input = tempDir.resolve("input.txt");
+        Path input = tempDir.resolve(INPUT_FILENAME);
         Files.write(input, inputLines, StandardCharsets.UTF_8);
         Path output = tempDir.resolve("output.txt");
 
@@ -111,7 +113,7 @@ public class ApplicationTest extends BaseTest {
         List<String> inputLines = Collections.singletonList("%C3%9Cber");
         List<String> outputLines = Collections.singletonList("Über");
 
-        Path input = tempDir.resolve("input.txt");
+        Path input = tempDir.resolve(INPUT_FILENAME);
         Files.write(input, inputLines, StandardCharsets.UTF_8);
         Path output = tempDir.resolve("output.txt");
 

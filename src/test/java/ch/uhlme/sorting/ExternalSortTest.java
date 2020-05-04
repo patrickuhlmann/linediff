@@ -16,14 +16,17 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ExternalSortTest extends BaseTest {
+    private final static String INPUT_FILENAME = "input.txt";
+    private final static String OUTPUT_FILENAME = "output.txt";
+    @SuppressWarnings("unused")
     @TempDir
-    Path tempDir;
+    transient Path tempDir;
 
     @Test
     @DisplayName("should throw an exception when called with null arguments")
     public void noArguments() {
-        ExternalSort ext = new ExternalSort();
-        Path p = Paths.get("test");
+        ExternalSort ext = new ExternalSort(); // NOPMD
+        Path p = Paths.get("test"); // NOPMD
 
         Assertions.assertThrows(NullPointerException.class, () -> ext.sort(p, null));
         Assertions.assertThrows(NullPointerException.class, () -> ext.sort(null, p));
@@ -34,9 +37,9 @@ public class ExternalSortTest extends BaseTest {
     public void sortSmallFile() throws IOException {
         List<String> expected = Arrays.asList("a", "b", "c");
 
-        Path f1 = tempDir.resolve("input.txt");
+        Path f1 = tempDir.resolve(INPUT_FILENAME);
         Files.write(f1, Arrays.asList("c", "b", "a"), StandardCharsets.UTF_8);
-        Path f2 = tempDir.resolve("output.txt");
+        Path f2 = tempDir.resolve(OUTPUT_FILENAME);
 
         ExternalSort ext = new ExternalSort();
         ext.sort(f1, f2);
@@ -49,9 +52,9 @@ public class ExternalSortTest extends BaseTest {
     public void sortSmallFileWithDuplicates() throws IOException {
         List<String> expected = Arrays.asList("a", "b", "b", "b", "c");
 
-        Path f1 = tempDir.resolve("input.txt");
+        Path f1 = tempDir.resolve(INPUT_FILENAME);
         Files.write(f1, Arrays.asList("b", "c", "b", "b", "a"), StandardCharsets.UTF_8);
-        Path f2 = tempDir.resolve("output.txt");
+        Path f2 = tempDir.resolve(OUTPUT_FILENAME);
 
         ExternalSort ext = new ExternalSort();
         ext.sort(f1, f2);
@@ -64,9 +67,9 @@ public class ExternalSortTest extends BaseTest {
     public void sortSmallFileWithEmptyLines() throws IOException {
         List<String> expected = Arrays.asList("", "", "", "a", "b", "b", "b", "c");
 
-        Path f1 = tempDir.resolve("input.txt");
+        Path f1 = tempDir.resolve(INPUT_FILENAME);
         Files.write(f1, Arrays.asList("b", "c", "b", "b", "", "", "", "a"), StandardCharsets.UTF_8);
-        Path f2 = tempDir.resolve("output.txt");
+        Path f2 = tempDir.resolve(OUTPUT_FILENAME);
 
         ExternalSort ext = new ExternalSort();
         ext.sort(f1, f2);
@@ -77,11 +80,11 @@ public class ExternalSortTest extends BaseTest {
     @Test
     @DisplayName("sort file with splitting")
     public void sortFileWithSplitting() throws IOException {
-        Path f1 = tempDir.resolve("input.txt");
+        Path f1 = tempDir.resolve(INPUT_FILENAME);
 
         FileUtils.generateFileWithRandomLines(f1, 100);
 
-        Path f2 = tempDir.resolve("output.txt");
+        Path f2 = tempDir.resolve(OUTPUT_FILENAME);
 
         ExternalSort ext = new ExternalSort(700);
         ext.sort(f1, f2);
@@ -90,11 +93,11 @@ public class ExternalSortTest extends BaseTest {
     @Test
     @DisplayName("sort file with splitting smaller than lines")
     public void sortFileSplitSmallerThanLines() throws IOException {
-        Path f1 = tempDir.resolve("input.txt");
+        Path f1 = tempDir.resolve(INPUT_FILENAME);
 
         FileUtils.generateFileWithRandomLines(f1, 2);
 
-        Path f2 = tempDir.resolve("output.txt");
+        Path f2 = tempDir.resolve(OUTPUT_FILENAME);
 
         ExternalSort ext = new ExternalSort(300);
         ext.sort(f1, f2);

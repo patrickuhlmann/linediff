@@ -1,6 +1,7 @@
 package ch.uhlme.utils;
 
 import ch.uhlme.BaseTest;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,8 +16,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class FileUtilsTest extends BaseTest {
+    @SuppressWarnings("unused")
     @TempDir
-    Path tempDir;
+    transient Path tempDir;
 
     @Test
     @DisplayName("lines are sorted")
@@ -98,12 +100,15 @@ public class FileUtilsTest extends BaseTest {
     @Test
     @DisplayName("throw exception if generate with negative number")
     public void generateFileWithRandomLinesNegative() {
-        Path filePath = tempDir.resolve("out.txt");
+        Path filePath = tempDir.resolve("out.txt"); // NOPMD
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> FileUtils.generateFileWithRandomLines(filePath, -10));
     }
 
+    @SuppressFBWarnings(
+            value = "DMI_HARDCODED_ABSOLUTE_FILENAME",
+            justification = "OK for test")
     @Test
     @DisplayName("regular file with extension")
     public void regularFileExtension() {
@@ -111,6 +116,9 @@ public class FileUtilsTest extends BaseTest {
                 FileUtils.getPathWithSuffixInFilename(Paths.get("/some/file/file.txt"), "_1").toString());
     }
 
+    @SuppressFBWarnings(
+            value = "DMI_HARDCODED_ABSOLUTE_FILENAME",
+            justification = "OK for test")
     @Test
     @DisplayName("file with no extension")
     public void noExtension() {
@@ -118,6 +126,9 @@ public class FileUtilsTest extends BaseTest {
                 FileUtils.getPathWithSuffixInFilename(Paths.get("/some/file/file"), "_1").toString());
     }
 
+    @SuppressFBWarnings(
+            value = "DMI_HARDCODED_ABSOLUTE_FILENAME",
+            justification = "OK for test")
     @Test
     @DisplayName("file without name, only extension")
     public void onlyFileExtension() {

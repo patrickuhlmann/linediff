@@ -2,18 +2,15 @@ package ch.uhlme;
 
 import ch.uhlme.commands.*;
 import ch.uhlme.utils.LogUtils;
-import com.google.common.flogger.FluentLogger;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
 
 public class Application {
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-
     static {
         try {
             LogUtils.initalizeLogging("logging.properties");
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

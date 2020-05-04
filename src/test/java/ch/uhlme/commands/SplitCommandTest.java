@@ -18,9 +18,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class SplitCommandTest extends BaseTest {
+    private final static String INPUT_FILENAME = "input.txt";
+    @SuppressWarnings("unused")
     @TempDir
-    Path tempDir;
-    SplitCommand splitCommand;
+    transient Path tempDir;
+    private transient SplitCommand splitCommand;
 
     @BeforeEach
     public void reinitalize() {
@@ -45,13 +47,13 @@ public class SplitCommandTest extends BaseTest {
     @DisplayName("should throw an exception if the input file does not exist")
     public void inputFileMustExist() {
         Assertions.assertThrows(FileNotFoundException.class,
-                () -> splitCommand.run(new String[]{"input.txt", "10"}));
+                () -> splitCommand.run(new String[]{INPUT_FILENAME, "10"}));
     }
 
     @Test
     @DisplayName("lines must be a positive integer")
     public void linesMustBePositiveInteger() throws IOException {
-        Path input = tempDir.resolve("input.txt");
+        Path input = tempDir.resolve(INPUT_FILENAME);
         createFileOrFail(input);
 
         Assertions.assertThrows(IllegalArgumentException.class,
@@ -68,7 +70,7 @@ public class SplitCommandTest extends BaseTest {
     @DisplayName("should throw an exception if the output file already exists")
     public void outputFileMustNotExist() throws IOException {
         List<String> inputLines = Arrays.asList("d", "a", "f");
-        Path input = tempDir.resolve("input.txt");
+        Path input = tempDir.resolve(INPUT_FILENAME);
         Files.write(input, inputLines, StandardCharsets.UTF_8);
 
         Path output = tempDir.resolve("input_1.txt");
@@ -82,7 +84,7 @@ public class SplitCommandTest extends BaseTest {
     @DisplayName("less lines than we split")
     public void lessLinesThanWeSplit() throws IOException {
         List<String> inputLines = Arrays.asList("d", "a", "f");
-        Path input = tempDir.resolve("input.txt");
+        Path input = tempDir.resolve(INPUT_FILENAME);
         Files.write(input, inputLines, StandardCharsets.UTF_8);
 
         Assertions.assertDoesNotThrow(
@@ -110,7 +112,7 @@ public class SplitCommandTest extends BaseTest {
     public void regularExecutionWithSorting() throws IOException {
         List<String> inputLines = Arrays.asList("a", "b", "c", "d", "e");
 
-        Path input = tempDir.resolve("input.txt");
+        Path input = tempDir.resolve(INPUT_FILENAME);
         Files.write(input, inputLines, StandardCharsets.UTF_8);
 
         Assertions.assertDoesNotThrow(() -> splitCommand.run(new String[]{input.toString(), "2"}));
@@ -131,7 +133,7 @@ public class SplitCommandTest extends BaseTest {
     public void laterOutputFileMustNotExist() throws IOException {
         List<String> inputLines = Arrays.asList("a", "b", "c", "d", "e");
 
-        Path input = tempDir.resolve("input.txt");
+        Path input = tempDir.resolve(INPUT_FILENAME);
         Files.write(input, inputLines, StandardCharsets.UTF_8);
 
         Path output = tempDir.resolve("input_3.txt");

@@ -16,9 +16,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ExternalSortCommandTest extends BaseTest {
+    @SuppressWarnings("unused")
     @TempDir
-    Path tempDir;
-    ExternalSortCommand sortCommand;
+    transient Path tempDir;
+    private transient ExternalSortCommand sortCommand;
 
     @BeforeEach
     public void reinitalizeSort() {

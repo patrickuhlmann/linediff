@@ -21,7 +21,7 @@ public class LineDiffCommand {
         logger.atInfo().log("started with %s", args);
 
         Tuple<Path, Path> inputFiles = this.verifyParameters(args);
-        this.runDiff(inputFiles.first, inputFiles.second, Paths.get(args[2]));
+        this.runDiff(inputFiles.getFirst(), inputFiles.getSecond(), Paths.get(args[2]));
 
         logger.atInfo().log("Process finished successfully");
     }
@@ -56,7 +56,7 @@ public class LineDiffCommand {
             if (!Files.exists(output) && Files.createDirectories(output) == null) {
                 throw new IOException(String.format("Unable to create directory %s", output));
             }
-            ExternalSort sort = new ExternalSort();
+            ExternalSort sort = new ExternalSort(); //NOPMD
             Path sortedInput = Paths.get(output.toAbsolutePath() + File.separator + "sorted_" + input.getFileName());
             if (Files.exists(sortedInput)) {
                 throw new IllegalArgumentException(String.format("Input file %s is unsorted and a sorted copy in the output folder can't be created, file already exists", input));

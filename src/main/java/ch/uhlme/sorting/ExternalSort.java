@@ -11,8 +11,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class ExternalSort {
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-    private long splitSize = 20L * 1024L * 1024L;
+    private final static FluentLogger logger = FluentLogger.forEnclosingClass();
+    private transient long splitSize = 20L * 1024L * 1024L;
 
     public ExternalSort() {
 
@@ -43,10 +43,12 @@ public class ExternalSort {
                 while (currentLine != null) {
                     logger.atFine().atMostEvery(10, TimeUnit.SECONDS).log("free memory: %s", new ByteCount(Runtime.getRuntime().freeMemory()));
                     long currentSize = 0;
+                    currentLine = fbr.readLine();
                     while ((currentSize < splitSize)
-                            && ((currentLine = fbr.readLine()) != null)) {
+                            && (currentLine != null)) {
                         lines.add(currentLine);
                         currentSize += currentLine.length() * 2 + 40; // java uses 16 bits per character + 40 bytes of overhead (estimated)
+                        currentLine = fbr.readLine();
                     }
                     if (!lines.isEmpty()) {
                         splitedFiles.add(sortAndSave(lines));
@@ -78,10 +80,8 @@ public class ExternalSort {
     private void mergeSortedFiles(List<Path> files, Path outputfile) throws IOException {
         logger.atFine().log("merge %d files", files.size());
 
-        Comparator<String> cmp = String::compareTo;
-
         PriorityQueue<BinaryFileBuffer> pq = new PriorityQueue<>(files.size(),
-                (i, j) -> cmp.compare(i.peek(), j.peek())
+                Comparator.comparing(BinaryFileBuffer::peek)
         );
 
         for (Path f : files) {
@@ -96,7 +96,7 @@ public class ExternalSort {
                 String r = bfb.pop();
                 fbw.write(r);
                 fbw.newLine();
-                if (bfb.empty()) {
+                if (bfb.isEmpty()) {
                     bfb.fbr.close();
                     if (Files.deleteIfExists(bfb.originalFile)) {
                         logger.atWarning().log("Unable to delete temporary file %s", bfb.originalFile);
@@ -111,10 +111,10 @@ public class ExternalSort {
     }
 
     static class BinaryFileBuffer {
-        private final BufferedReader fbr;
-        private final Path originalFile;
-        private String cache;
-        private boolean empty;
+        private transient final BufferedReader fbr;
+        private transient final Path originalFile;
+        private transient String cache;
+        private transient boolean empty;
 
         public BinaryFileBuffer(Path f) throws IOException {
             originalFile = f;
@@ -122,7 +122,7 @@ public class ExternalSort {
             reload();
         }
 
-        public boolean empty() {
+        public boolean isEmpty() {
             return empty;
         }
 
@@ -131,7 +131,7 @@ public class ExternalSort {
                 empty = (this.cache = fbr.readLine()) == null;
             } catch (EOFException oef) {
                 empty = true;
-                cache = null;
+                cache = null; // NOPMD
             }
         }
 
@@ -140,7 +140,7 @@ public class ExternalSort {
         }
 
         public String peek() {
-            if (empty()) return null;
+            if (isEmpty()) return null;
             return cache;
         }
 
