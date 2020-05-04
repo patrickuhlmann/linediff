@@ -17,7 +17,7 @@ public class Application {
 
     public static void main(String[] args) throws Exception {
         if (args == null || args.length < 1) {
-            throw new IllegalArgumentException("No command specified. Available commands: linediff, externalsort, split, decodeurl and replace");
+            throw new IllegalArgumentException("No command specified. Available commands: linediff, externalsort, split, decodeurl, countlines, removelines and replace");
         }
 
         String command = args[0];
@@ -43,6 +43,14 @@ public class Application {
             case "decodeurl":
                 DecodeURLCommand decodeURL = new DecodeURLCommand();
                 decodeURL.run(args);
+                break;
+            case "countlines":
+                CountLinesCommand countLinesCommand = new CountLinesCommand();
+                countLinesCommand.run(args);
+                break;
+            case "removelines":
+                RemoveLinesCommand removeLines = new RemoveLinesCommand();
+                removeLines.run(args);
                 break;
             default:
                 throw new IllegalArgumentException(String.format("Specified command %s not found", command));

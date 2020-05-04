@@ -15,12 +15,13 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ExternalSortTest extends BaseTest {
     private final static String INPUT_FILENAME = "input.txt";
     private final static String OUTPUT_FILENAME = "output.txt";
     @SuppressWarnings("unused")
     @TempDir
-    transient Path tempDir;
+    Path tempDir;
 
     @Test
     @DisplayName("should throw an exception when called with null arguments")
@@ -84,9 +85,9 @@ public class ExternalSortTest extends BaseTest {
 
         FileUtils.generateFileWithRandomLines(f1, 100);
 
-        Path f2 = tempDir.resolve(OUTPUT_FILENAME);
+        Path f2 = tempDir.resolve(OUTPUT_FILENAME); // NOPMD
 
-        ExternalSort ext = new ExternalSort(700);
+        ExternalSort ext = new ExternalSort(700); // NOPMD
 
         Assertions.assertDoesNotThrow(() -> ext.sort(f1, f2));
     }
@@ -98,9 +99,9 @@ public class ExternalSortTest extends BaseTest {
 
         FileUtils.generateFileWithRandomLines(f1, 2);
 
-        Path f2 = tempDir.resolve(OUTPUT_FILENAME);
+        Path f2 = tempDir.resolve(OUTPUT_FILENAME); // NOPMD
 
-        ExternalSort ext = new ExternalSort(300);
+        ExternalSort ext = new ExternalSort(300); // NOPMD
         Assertions.assertDoesNotThrow(() -> ext.sort(f1, f2));
     }
 

@@ -3,10 +3,11 @@ package ch.uhlme.diff;
 import java.io.IOException;
 import java.util.Objects;
 
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class LineDiff {
-    private final transient InputFile firstInput;
-    private final transient InputFile secondInput;
-    private final transient OutputFolder output;
+    private final InputFile firstInput;
+    private final InputFile secondInput;
+    private final OutputFolder output;
 
     public LineDiff(InputFile firstInput, InputFile secondInput, OutputFolder output) {
         Objects.requireNonNull(firstInput);

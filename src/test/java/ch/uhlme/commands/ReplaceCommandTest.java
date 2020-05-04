@@ -16,15 +16,16 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ReplaceCommandTest extends BaseTest {
     private final static String INPUT_FILENAME = "input.txt";
     @SuppressWarnings("unused")
     @TempDir
-    transient Path tempDir;
-    private transient ReplaceCommand replaceCommand;
+    Path tempDir;
+    private ReplaceCommand replaceCommand;
 
     @BeforeEach
-    public void reinitalize() {
+    public void reinitialize() {
         replaceCommand = new ReplaceCommand();
     }
 

@@ -17,15 +17,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class SplitCommandTest extends BaseTest {
     private final static String INPUT_FILENAME = "input.txt";
     @SuppressWarnings("unused")
     @TempDir
-    transient Path tempDir;
-    private transient SplitCommand splitCommand;
+    Path tempDir;
+    private SplitCommand splitCommand;
 
     @BeforeEach
-    public void reinitalize() {
+    public void reinitialize() {
         splitCommand = new SplitCommand();
     }
 

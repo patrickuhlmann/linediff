@@ -10,10 +10,11 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Path;
 
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class OutputFolderTest extends BaseTest {
     @SuppressWarnings("unused")
     @TempDir
-    transient Path tempDir;
+    Path tempDir;
 
     @Test
     @DisplayName("exception with empty path")

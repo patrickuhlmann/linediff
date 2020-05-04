@@ -14,11 +14,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ApplicationTest extends BaseTest {
     private static final String INPUT_FILENAME = "input.txt";
+    private static final String OUTPUT_FILENAME = "output.txt";
     @SuppressWarnings("unused")
     @TempDir
-    transient Path tempDir;
+    Path tempDir;
 
     @Test
     @DisplayName("should throw an exception when called with null arguments")
@@ -67,7 +69,7 @@ public class ApplicationTest extends BaseTest {
         Path input = tempDir.resolve(INPUT_FILENAME);
         Files.write(input, inputLines, StandardCharsets.UTF_8);
 
-        Path output = tempDir.resolve("output.txt");
+        Path output = tempDir.resolve(OUTPUT_FILENAME);
 
         Assertions.assertDoesNotThrow(() ->
                 Application.main(new String[]{"externalsort", input.toString(), output.toString()}));
@@ -100,7 +102,7 @@ public class ApplicationTest extends BaseTest {
 
         Path input = tempDir.resolve(INPUT_FILENAME);
         Files.write(input, inputLines, StandardCharsets.UTF_8);
-        Path output = tempDir.resolve("output.txt");
+        Path output = tempDir.resolve(OUTPUT_FILENAME);
 
         Application.main(new String[]{"replace", input.toString(), output.toString(), "\\s[0-9]*\\s", " "});
 
@@ -115,9 +117,35 @@ public class ApplicationTest extends BaseTest {
 
         Path input = tempDir.resolve(INPUT_FILENAME);
         Files.write(input, inputLines, StandardCharsets.UTF_8);
-        Path output = tempDir.resolve("output.txt");
+        Path output = tempDir.resolve(OUTPUT_FILENAME);
 
         Application.main(new String[]{"decodeurl", input.toString(), output.toString()});
+
+        verifyFile(output, outputLines);
+    }
+
+    @Test
+    @DisplayName("regular count")
+    public void countNormal() throws Exception {
+        List<String> inputLines = Arrays.asList("Test1", "abc", "Test2", "def", "Test3");
+
+        Path input = tempDir.resolve(INPUT_FILENAME);
+        Files.write(input, inputLines, StandardCharsets.UTF_8);
+
+        Assertions.assertDoesNotThrow(() -> Application.main(new String[]{"countlines", input.toString(), "Test"}));
+    }
+
+    @Test
+    @DisplayName("regular remove lines")
+    public void removeLinesNormal() throws Exception {
+        List<String> inputLines = Arrays.asList("line1", "test", "line2", "", "line3");
+        List<String> outputLines = Arrays.asList("line1", "line2", "", "line3");
+
+        Path input = tempDir.resolve(INPUT_FILENAME);
+        Files.write(input, inputLines, StandardCharsets.UTF_8);
+        Path output = tempDir.resolve(OUTPUT_FILENAME);
+
+        Application.main(new String[]{"removelines", input.toString(), output.toString(), "test"});
 
         verifyFile(output, outputLines);
     }
