@@ -87,7 +87,8 @@ public class ExternalSortTest extends BaseTest {
         Path f2 = tempDir.resolve(OUTPUT_FILENAME);
 
         ExternalSort ext = new ExternalSort(700);
-        ext.sort(f1, f2);
+
+        Assertions.assertDoesNotThrow(() -> ext.sort(f1, f2));
     }
 
     @Test
@@ -100,7 +101,7 @@ public class ExternalSortTest extends BaseTest {
         Path f2 = tempDir.resolve(OUTPUT_FILENAME);
 
         ExternalSort ext = new ExternalSort(300);
-        ext.sort(f1, f2);
+        Assertions.assertDoesNotThrow(() -> ext.sort(f1, f2));
     }
 
     private void verifyFile(Path file, List<String> elements) throws IOException {

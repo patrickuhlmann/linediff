@@ -10,9 +10,9 @@ import java.nio.file.Paths;
 import java.util.Objects;
 
 public class OutputFolder implements AutoCloseable {
-    private transient final BufferedWriter bothWriter;
-    private transient final BufferedWriter onlyFirstWriter;
-    private transient final BufferedWriter onlySecondWriter;
+    private final transient BufferedWriter bothWriter;
+    private final transient BufferedWriter onlyFirstWriter;
+    private final transient BufferedWriter onlySecondWriter;
 
     public OutputFolder(Path folder) throws IOException {
         Objects.requireNonNull(folder);

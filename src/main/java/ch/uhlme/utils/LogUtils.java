@@ -6,6 +6,9 @@ import java.io.InputStream;
 import java.util.logging.LogManager;
 
 public class LogUtils {
+    private LogUtils() {
+    }
+
     public static void initalizeLogging(String resource) throws IOException {
         try (InputStream stream = Thread.currentThread().getContextClassLoader().
                 getResourceAsStream(resource)) {

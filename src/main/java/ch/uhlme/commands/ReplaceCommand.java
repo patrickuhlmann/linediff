@@ -17,7 +17,7 @@ import java.util.Objects;
 public class ReplaceCommand {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
-    public void run(String[] args) throws Exception {
+    public void run(String[] args) throws IOException {
         logger.atInfo().log("started with %s", args);
 
         Quadruple<Path, Path, String, String> arguments = verifyParameters(args);

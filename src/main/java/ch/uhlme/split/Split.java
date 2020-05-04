@@ -14,8 +14,8 @@ import java.util.Objects;
 
 public class Split {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-    private transient final Path inputFile;
-    private transient final int maxLinesPerFile;
+    private final transient Path inputFile;
+    private final transient int maxLinesPerFile;
     private transient int fileNumber = 1;
     private transient BufferedWriter writer = null;
     private transient int linesInCurrentFile = 0;
