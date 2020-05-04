@@ -1,33 +1,41 @@
 package ch.uhlme.utils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class FileUtils {
     private static final Random random = new Random();
 
-    public static boolean deleteRecursive(Path path) {
+    public static boolean deleteRecursive(Path path) throws IOException {
         Objects.requireNonNull(path);
 
-        File[] flist = path.toFile().listFiles();
-        if (flist != null && flist.length > 0) {
-            for (File f : flist) {
-                if (!deleteRecursive(f.toPath())) {
-                    return false;
+        if (Files.isDirectory(path)) {
+            List<Path> flist = Files.list(path).collect(Collectors.toList());
+            if (flist.size() > 0) {
+                for (Path f : flist) {
+                    if (!deleteRecursive(f)) {
+                        return false;
+                    }
                 }
             }
         }
 
-        return path.toFile().delete();
+        return Files.deleteIfExists(path);
     }
 
     public static boolean areLinesInFileSorted(Path path) throws IOException {
         Objects.requireNonNull(path);
 
-        try (BufferedReader br = new BufferedReader(new FileReader(path.toFile()))) {
+        try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             String previousLine = "";
             String currentLine = br.readLine();
             while (currentLine != null) {
@@ -50,8 +58,8 @@ public class FileUtils {
             throw new IllegalArgumentException("lines must be positive");
         }
 
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path.toFile()))) {
-            for (int i=0; i<lines; i++) {
+        try (BufferedWriter bw = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+            for (int i = 0; i < lines; i++) {
                 bw.write(randomLine());
                 bw.newLine();
             }

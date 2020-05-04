@@ -7,10 +7,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -48,10 +48,10 @@ public class LineDiffCommandTest extends BaseTest {
         Path firstInput = tempDir.resolve("first.txt");
         createFileOrFail(firstInput);
 
-        Assertions.assertThrows(FileNotFoundException.class,
+        Assertions.assertThrows(NoSuchFileException.class,
                 () -> diffCommand.run(new String[]{"first.txt", "second.txt", "output.txt"}));
 
-        Assertions.assertThrows(FileNotFoundException.class,
+        Assertions.assertThrows(NoSuchFileException.class,
                 () -> diffCommand.run(new String[]{firstInput.toString(), "second.txt", "output.txt"}));
     }
 

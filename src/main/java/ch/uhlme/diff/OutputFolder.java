@@ -2,8 +2,8 @@ package ch.uhlme.diff;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,13 +23,13 @@ public class OutputFolder implements AutoCloseable {
         Path second = Paths.get(folder.toAbsolutePath() + File.separator + "second_only.txt");
         Path both = Paths.get(folder.toAbsolutePath() + File.separator + "both.txt");
 
-        if (first.toFile().exists() || second.toFile().exists() || both.toFile().exists()) {
+        if (Files.exists(first) || Files.exists(second) || Files.exists(both)) {
             throw new IllegalArgumentException(String.format("Files in the output folder %s mustn't exist", folder));
         }
 
-        onlyFirstWriter = new BufferedWriter(new FileWriter(first.toFile()));
-        onlySecondWriter = new BufferedWriter(new FileWriter(second.toFile()));
-        bothWriter = new BufferedWriter(new FileWriter(both.toFile()));
+        onlyFirstWriter = Files.newBufferedWriter(first, StandardCharsets.UTF_8);
+        onlySecondWriter = Files.newBufferedWriter(second, StandardCharsets.UTF_8);
+        bothWriter = Files.newBufferedWriter(both, StandardCharsets.UTF_8);
     }
 
     public void addBothLine(String line) throws IOException {

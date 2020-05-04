@@ -1,8 +1,9 @@
 package ch.uhlme.diff;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -13,7 +14,7 @@ public class InputFile implements AutoCloseable {
     public InputFile(Path inputFile) throws IOException {
         Objects.requireNonNull(inputFile);
 
-        reader = new BufferedReader(new FileReader(inputFile.toFile()));
+        reader = Files.newBufferedReader(inputFile, StandardCharsets.UTF_8);
     }
 
     public String getNextUniqueLine() throws IOException {
