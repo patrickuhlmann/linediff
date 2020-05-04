@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ByteCountTest {
+    @SuppressWarnings("unused")
     @Test
     @DisplayName("test all steps from bytes to lots of gigabytes")
     public void bytesToLotsOfGigabytes(@TempDir Path tempDir) {

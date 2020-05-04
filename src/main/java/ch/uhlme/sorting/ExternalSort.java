@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class ExternalSort {
-    private final static FluentLogger logger = FluentLogger.forEnclosingClass();
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private transient long splitSize = 20L * 1024L * 1024L;
 
     public ExternalSort() {
@@ -111,8 +111,8 @@ public class ExternalSort {
     }
 
     static class BinaryFileBuffer {
-        private transient final BufferedReader fbr;
-        private transient final Path originalFile;
+        private final transient BufferedReader fbr;
+        private final transient Path originalFile;
         private transient String cache;
         private transient boolean empty;
 

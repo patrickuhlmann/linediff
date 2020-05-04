@@ -12,6 +12,9 @@ import java.util.Random;
 public class FileUtils {
     private static final Random random = new Random();
 
+    private FileUtils() {
+    }
+
     public static void deleteRecursive(Path path) throws IOException {
         Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
             @Override
@@ -78,7 +81,7 @@ public class FileUtils {
         Objects.requireNonNull(path);
         Objects.requireNonNull(suffix);
 
-        int fileExtensionPosition = path.toString().lastIndexOf(".");
+        int fileExtensionPosition = path.toString().lastIndexOf('.');
 
         String filename;
         if (fileExtensionPosition > -1) {

@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 public class DecodeURLCommand {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
-    public void run(String[] args) throws Exception {
+    public void run(String[] args) throws IOException {
         logger.atInfo().log("started with %s", args);
 
         Tuple<Path, Path> arguments = verifyParameters(args);
