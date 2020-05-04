@@ -61,7 +61,7 @@ sonarqube {
 
 spotbugs {
     //noinspection GrFinalVariableAccess
-    ignoreFailures = false as Property<Boolean>
+    ignoreFailures = false
 }
 
 spotbugsMain {

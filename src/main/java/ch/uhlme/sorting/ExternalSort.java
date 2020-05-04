@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ExternalSort {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-    private long splitSize = 20 * 1024 * 1024;
+    private long splitSize = 20L * 1024L * 1024L;
 
     public ExternalSort() {
 
@@ -48,14 +48,14 @@ public class ExternalSort {
                         lines.add(currentLine);
                         currentSize += currentLine.length() * 2 + 40; // java uses 16 bits per character + 40 bytes of overhead (estimated)
                     }
-                    if (lines.size() > 0) {
+                    if (!lines.isEmpty()) {
                         splitedFiles.add(sortAndSave(lines));
                     }
                     lines.clear();
                 }
             } catch (EOFException oef) {
                 logger.atFine().log("EOF Exception");
-                if (lines.size() > 0) {
+                if (!lines.isEmpty()) {
                     splitedFiles.add(sortAndSave(lines));
                     lines.clear();
                 }
@@ -91,7 +91,7 @@ public class ExternalSort {
         }
 
         try (BufferedWriter fbw = Files.newBufferedWriter(outputfile, StandardCharsets.UTF_8)) {
-            while (pq.size() > 0) {
+            while (!pq.isEmpty()) {
                 BinaryFileBuffer bfb = pq.poll();
                 String r = bfb.pop();
                 fbw.write(r);

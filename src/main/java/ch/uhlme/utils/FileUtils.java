@@ -4,32 +4,28 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Objects;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class FileUtils {
     private static final Random random = new Random();
 
-    public static boolean deleteRecursive(Path path) throws IOException {
-        Objects.requireNonNull(path);
-
-        if (Files.isDirectory(path)) {
-            List<Path> flist = Files.list(path).collect(Collectors.toList());
-            if (flist.size() > 0) {
-                for (Path f : flist) {
-                    if (!deleteRecursive(f)) {
-                        return false;
-                    }
-                }
+    public static void deleteRecursive(Path path) throws IOException {
+        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
             }
-        }
 
-        return Files.deleteIfExists(path);
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                Files.delete(dir);
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 
     public static boolean areLinesInFileSorted(Path path) throws IOException {
