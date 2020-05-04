@@ -1,6 +1,10 @@
-﻿[![Build Status](https://travis-ci.com/patrickuhlmann/linedifference.svg?branch=master)](https://travis-ci.com/patrickuhlmann/linedifference)
-
+﻿![GitHub](https://img.shields.io/github/license/patrickuhlmann/linedifference)
+[![Build Status](https://travis-ci.com/patrickuhlmann/linedifference.svg?branch=master)](https://travis-ci.com/patrickuhlmann/linedifference)
 [![codecov](https://codecov.io/gh/patrickuhlmann/linedifference/branch/master/graph/badge.svg)](https://codecov.io/gh/patrickuhlmann/linedifference)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=alert_status)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=security_rating)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
 
 ## Getting Started
 
