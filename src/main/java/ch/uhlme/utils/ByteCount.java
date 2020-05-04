@@ -3,8 +3,9 @@ package ch.uhlme.utils;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ByteCount {
-    private final transient long count;
+    private final long count;
 
     public ByteCount(long count) {
         this.count = count;

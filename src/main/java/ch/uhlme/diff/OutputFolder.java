@@ -9,10 +9,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class OutputFolder implements AutoCloseable {
-    private final transient BufferedWriter bothWriter;
-    private final transient BufferedWriter onlyFirstWriter;
-    private final transient BufferedWriter onlySecondWriter;
+    private final BufferedWriter bothWriter;
+    private final BufferedWriter onlyFirstWriter;
+    private final BufferedWriter onlySecondWriter;
 
     public OutputFolder(Path folder) throws IOException {
         Objects.requireNonNull(folder);

@@ -17,14 +17,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class LineDiffCommandTest extends BaseTest {
     @SuppressWarnings("unused")
     @TempDir
-    transient Path tempDir;
-    private transient LineDiffCommand diffCommand;
+    Path tempDir;
+    private LineDiffCommand diffCommand;
 
     @BeforeEach
-    public void reinitalizeLineDiff() {
+    public void reinitialize() {
         diffCommand = new LineDiffCommand();
     }
 

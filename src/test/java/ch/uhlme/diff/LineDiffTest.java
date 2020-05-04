@@ -17,10 +17,11 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class LineDiffTest extends BaseTest {
     @SuppressWarnings("unused")
     @TempDir
-    transient Path tempDir;
+    Path tempDir;
 
     @Test
     @DisplayName("exception if any input or output is null")

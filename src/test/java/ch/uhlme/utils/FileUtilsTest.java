@@ -15,10 +15,11 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class FileUtilsTest extends BaseTest {
     @SuppressWarnings("unused")
     @TempDir
-    transient Path tempDir;
+    Path tempDir;
 
     @Test
     @DisplayName("lines are sorted")

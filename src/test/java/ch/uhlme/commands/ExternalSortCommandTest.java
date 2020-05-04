@@ -15,14 +15,15 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ExternalSortCommandTest extends BaseTest {
     @SuppressWarnings("unused")
     @TempDir
-    transient Path tempDir;
-    private transient ExternalSortCommand sortCommand;
+    Path tempDir;
+    private ExternalSortCommand sortCommand;
 
     @BeforeEach
-    public void reinitalizeSort() {
+    public void reinitialize() {
         sortCommand = new ExternalSortCommand();
     }
 

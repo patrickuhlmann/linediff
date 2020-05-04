@@ -14,11 +14,12 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class InputFileTest extends BaseTest {
     private final static String INPUT_FILENAME = "input.txt";
     @SuppressWarnings("unused")
     @TempDir
-    transient Path tempDir;
+    Path tempDir;
 
     @Test
     @DisplayName("exception with empty file")

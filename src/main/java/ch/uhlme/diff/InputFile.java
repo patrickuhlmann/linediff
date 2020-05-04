@@ -7,9 +7,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class InputFile implements AutoCloseable {
-    private final transient BufferedReader reader;
-    private transient String previousLine = null;
+    private final BufferedReader reader;
+    private String previousLine = null;
 
     public InputFile(Path inputFile) throws IOException {
         Objects.requireNonNull(inputFile);

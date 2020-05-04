@@ -12,13 +12,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class Split {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-    private final transient Path inputFile;
-    private final transient int maxLinesPerFile;
-    private transient int fileNumber = 1;
-    private transient BufferedWriter writer = null;
-    private transient int linesInCurrentFile = 0;
+    private final Path inputFile;
+    private final int maxLinesPerFile;
+    private int fileNumber = 1;
+    private BufferedWriter writer = null;
+    private int linesInCurrentFile = 0;
 
     public Split(Path input, int maxLinesPerFile) {
         Objects.requireNonNull(input);

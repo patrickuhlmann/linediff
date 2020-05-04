@@ -10,9 +10,10 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ExternalSort {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-    private transient long splitSize = 20L * 1024L * 1024L;
+    private long splitSize = 20L * 1024L * 1024L;
 
     public ExternalSort() {
 
@@ -110,11 +111,12 @@ public class ExternalSort {
         }
     }
 
+    @SuppressWarnings("PMD.BeanMembersShouldSerialize")
     static class BinaryFileBuffer {
-        private final transient BufferedReader fbr;
-        private final transient Path originalFile;
-        private transient String cache;
-        private transient boolean empty;
+        private final BufferedReader fbr;
+        private final Path originalFile;
+        private String cache;
+        private boolean empty;
 
         public BinaryFileBuffer(Path f) throws IOException {
             originalFile = f;
