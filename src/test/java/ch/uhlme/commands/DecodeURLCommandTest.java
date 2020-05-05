@@ -32,7 +32,7 @@ public class DecodeURLCommandTest extends BaseTest {
     @Test
     @DisplayName("should throw an exception when called without arguments")
     public void noArguments() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> decodeURLCommand.run(null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> decodeURLCommand.execute(null));
     }
 
     @Test
@@ -41,9 +41,9 @@ public class DecodeURLCommandTest extends BaseTest {
         Path input = tempDir.resolve(INPUT_FILENAME);
         createFileOrFail(input);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> decodeURLCommand.run(new String[]{input.toString()}));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> decodeURLCommand.execute(new String[]{input.toString()}));
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> decodeURLCommand.run(new String[]{input.toString(), "1", "2"}));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> decodeURLCommand.execute(new String[]{input.toString(), "1", "2"}));
     }
 
 
@@ -53,7 +53,7 @@ public class DecodeURLCommandTest extends BaseTest {
         Path input = tempDir.resolve(INPUT_FILENAME); // NOPMD
 
         Assertions.assertThrows(FileNotFoundException.class,
-                () -> decodeURLCommand.run(new String[]{input.toString(), "2"}));
+                () -> decodeURLCommand.execute(new String[]{input.toString(), "2"}));
     }
 
     @Test
@@ -66,7 +66,7 @@ public class DecodeURLCommandTest extends BaseTest {
         createFileOrFail(output);
 
         Assertions.assertThrows(FileAlreadyExistsException.class,
-                () -> decodeURLCommand.run(new String[]{input.toString(), output.toString()}));
+                () -> decodeURLCommand.execute(new String[]{input.toString(), output.toString()}));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class DecodeURLCommandTest extends BaseTest {
         Files.write(input, inputLines, StandardCharsets.UTF_8);
         Path output = tempDir.resolve("output.txt");
 
-        decodeURLCommand.run(new String[]{input.toString(), output.toString()});
+        decodeURLCommand.execute(new String[]{input.toString(), output.toString()});
 
         verifyFile(output, outputLines);
     }

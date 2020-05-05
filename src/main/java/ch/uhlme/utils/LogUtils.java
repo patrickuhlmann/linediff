@@ -9,7 +9,7 @@ public class LogUtils {
     private LogUtils() {
     }
 
-    public static void initalizeLogging(String resource) throws IOException {
+    public static void initializeLogging(String resource) throws IOException {
         try (InputStream stream = Thread.currentThread().getContextClassLoader().
                 getResourceAsStream(resource)) {
 
@@ -17,12 +17,7 @@ public class LogUtils {
                 throw new FileNotFoundException(String.format("unable to find resource: %s", resource));
             }
 
-            try {
-                LogManager.getLogManager().readConfiguration(stream);
-            } catch (IOException e) {
-                System.out.println("Unable to load logging configuration.");
-                e.printStackTrace();
-            }
+            LogManager.getLogManager().readConfiguration(stream);
         }
     }
 }

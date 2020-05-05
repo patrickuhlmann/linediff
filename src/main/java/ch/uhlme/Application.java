@@ -3,57 +3,48 @@ package ch.uhlme;
 import ch.uhlme.commands.*;
 import ch.uhlme.utils.LogUtils;
 
-import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 public class Application {
-    static {
-        try {
-            LogUtils.initalizeLogging("logging.properties");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    private static final List<Command> commands = Arrays.asList(
+            new CountLinesCommand(),
+            new DecodeURLCommand(),
+            new ExternalSortCommand(),
+            new LineDiffCommand(),
+            new RemoveLinesCommand(),
+            new ReplaceCommand(),
+            new SplitCommand());
 
     public static void main(String[] args) throws Exception {
+        LogUtils.initializeLogging("logging.properties");
+
         if (args == null || args.length < 1) {
-            throw new IllegalArgumentException("No command specified. Available commands: linediff, externalsort, split, decodeurl, countlines, removelines and replace");
+            throw new IllegalArgumentException(String.format("No command specified. Available commands: %n%s", getAllCommandNames()));
         }
 
-        String command = args[0];
-        args = Arrays.copyOfRange(args, 1, args.length);
+        String commandName = args[0];
+        String[] parameters = Arrays.copyOfRange(args, 1, args.length);
 
-        switch (command) {
-            case "linediff":
-                LineDiffCommand lineDiff = new LineDiffCommand();
-                lineDiff.run(args);
-                break;
-            case "externalsort":
-                ExternalSortCommand sort = new ExternalSortCommand();
-                sort.run(args);
-                break;
-            case "split":
-                SplitCommand split = new SplitCommand();
-                split.run(args);
-                break;
-            case "replace":
-                ReplaceCommand replace = new ReplaceCommand();
-                replace.run(args);
-                break;
-            case "decodeurl":
-                DecodeURLCommand decodeURL = new DecodeURLCommand();
-                decodeURL.run(args);
-                break;
-            case "countlines":
-                CountLinesCommand countLinesCommand = new CountLinesCommand();
-                countLinesCommand.run(args);
-                break;
-            case "removelines":
-                RemoveLinesCommand removeLines = new RemoveLinesCommand();
-                removeLines.run(args);
-                break;
-            default:
-                throw new IllegalArgumentException(String.format("Specified command %s not found", command));
+        Command cmd = getCommand(commandName);
+        cmd.execute(parameters);
+    }
+
+    private static Command getCommand(String name) {
+        for (Command c : commands) {
+            if (c.getName().equals(name)) {
+                return c;
+            }
         }
+
+        throw new IllegalArgumentException(String.format("Specified command %s not found", name));
+    }
+
+    private static String getAllCommandNames() {
+        StringBuilder commandList = new StringBuilder();
+        for (Command c : commands) {
+            commandList.append("\t").append(c.getName());
+        }
+        return commandList.toString();
     }
 }

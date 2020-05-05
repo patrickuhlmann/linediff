@@ -33,7 +33,7 @@ public class RemoveLinesCommandTest extends BaseTest {
     @Test
     @DisplayName("should throw an exception when called without arguments")
     public void noArguments() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> removeLinesCommand.run(null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> removeLinesCommand.execute(null));
     }
 
     @Test
@@ -42,9 +42,9 @@ public class RemoveLinesCommandTest extends BaseTest {
         Path input = tempDir.resolve(INPUT_FILENAME);
         createFileOrFail(input);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> removeLinesCommand.run(new String[]{input.toString(), "2"}));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> removeLinesCommand.execute(new String[]{input.toString(), "2"}));
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> removeLinesCommand.run(new String[]{input.toString(), "2", "3", "4", "5"}));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> removeLinesCommand.execute(new String[]{input.toString(), "2", "3", "4", "5"}));
     }
 
 
@@ -54,7 +54,7 @@ public class RemoveLinesCommandTest extends BaseTest {
         Path input = tempDir.resolve(INPUT_FILENAME); // NOPMD
 
         Assertions.assertThrows(FileNotFoundException.class,
-                () -> removeLinesCommand.run(new String[]{input.toString(), "2", "3"}));
+                () -> removeLinesCommand.execute(new String[]{input.toString(), "2", "3"}));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class RemoveLinesCommandTest extends BaseTest {
         createFileOrFail(output);
 
         Assertions.assertThrows(FileAlreadyExistsException.class,
-                () -> removeLinesCommand.run(new String[]{input.toString(), output.toString(), "3"}));
+                () -> removeLinesCommand.execute(new String[]{input.toString(), output.toString(), "3"}));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class RemoveLinesCommandTest extends BaseTest {
         Path output = tempDir.resolve("output.txt"); // NOPMD
 
         Assertions.assertThrows(PatternSyntaxException.class,
-                () -> removeLinesCommand.run(new String[]{input.toString(), output.toString(), "[[[[["}));
+                () -> removeLinesCommand.execute(new String[]{input.toString(), output.toString(), "[[[[["}));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class RemoveLinesCommandTest extends BaseTest {
         Files.write(input, inputLines, StandardCharsets.UTF_8);
         Path output = tempDir.resolve("output.txt");
 
-        removeLinesCommand.run(new String[]{input.toString(), output.toString(), "test"});
+        removeLinesCommand.execute(new String[]{input.toString(), output.toString(), "test"});
 
         verifyFile(output, outputLines);
     }

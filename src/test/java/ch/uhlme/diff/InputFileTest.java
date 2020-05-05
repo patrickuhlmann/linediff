@@ -9,7 +9,6 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +31,7 @@ public class InputFileTest extends BaseTest {
     public void invvalidIfNotExists() {
         Path filePath = tempDir.resolve(INPUT_FILENAME);  // NOPMD
 
-        Assertions.assertThrows(NoSuchFileException.class, () -> new InputFile(filePath));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new InputFile(filePath));
     }
 
     @Test

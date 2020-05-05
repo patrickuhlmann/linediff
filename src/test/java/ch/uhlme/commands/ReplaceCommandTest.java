@@ -32,7 +32,7 @@ public class ReplaceCommandTest extends BaseTest {
     @Test
     @DisplayName("should throw an exception when called without arguments")
     public void noArguments() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> replaceCommand.run(null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> replaceCommand.execute(null));
     }
 
     @Test
@@ -41,9 +41,9 @@ public class ReplaceCommandTest extends BaseTest {
         Path input = tempDir.resolve(INPUT_FILENAME);
         createFileOrFail(input);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> replaceCommand.run(new String[]{input.toString(), "2", "3"}));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> replaceCommand.execute(new String[]{input.toString(), "2", "3"}));
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> replaceCommand.run(new String[]{input.toString(), "2", "3", "4", "5"}));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> replaceCommand.execute(new String[]{input.toString(), "2", "3", "4", "5"}));
     }
 
 
@@ -53,7 +53,7 @@ public class ReplaceCommandTest extends BaseTest {
         Path input = tempDir.resolve(INPUT_FILENAME); // NOPMD
 
         Assertions.assertThrows(FileNotFoundException.class,
-                () -> replaceCommand.run(new String[]{input.toString(), "2", "3", "4"}));
+                () -> replaceCommand.execute(new String[]{input.toString(), "2", "3", "4"}));
     }
 
     @Test
@@ -66,7 +66,7 @@ public class ReplaceCommandTest extends BaseTest {
         createFileOrFail(output);
 
         Assertions.assertThrows(FileAlreadyExistsException.class,
-                () -> replaceCommand.run(new String[]{input.toString(), output.toString(), "3", "4"}));
+                () -> replaceCommand.execute(new String[]{input.toString(), output.toString(), "3", "4"}));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class ReplaceCommandTest extends BaseTest {
         Files.write(input, inputLines, StandardCharsets.UTF_8);
         Path output = tempDir.resolve("output.txt");
 
-        replaceCommand.run(new String[]{input.toString(), output.toString(), "\\s[0-9]*\\s", " "});
+        replaceCommand.execute(new String[]{input.toString(), output.toString(), "\\s[0-9]*\\s", " "});
 
         verifyFile(output, outputLines);
     }

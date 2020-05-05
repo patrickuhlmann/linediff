@@ -32,7 +32,7 @@ public class CountLinesCommandTest extends BaseTest {
     @Test
     @DisplayName("should throw an exception when called without arguments")
     public void noArguments() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> countLinesCommand.run(null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> countLinesCommand.execute(null));
     }
 
     @Test
@@ -41,9 +41,9 @@ public class CountLinesCommandTest extends BaseTest {
         Path input = tempDir.resolve(INPUT_FILENAME);
         createFileOrFail(input);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> countLinesCommand.run(new String[]{input.toString()}));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> countLinesCommand.execute(new String[]{input.toString()}));
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> countLinesCommand.run(new String[]{input.toString(), "1", "2",}));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> countLinesCommand.execute(new String[]{input.toString(), "1", "2",}));
     }
 
     @Test
@@ -52,7 +52,7 @@ public class CountLinesCommandTest extends BaseTest {
         Path input = tempDir.resolve(INPUT_FILENAME); // NOPMD
 
         Assertions.assertThrows(FileNotFoundException.class,
-                () -> countLinesCommand.run(new String[]{input.toString(), "2"}));
+                () -> countLinesCommand.execute(new String[]{input.toString(), "2"}));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class CountLinesCommandTest extends BaseTest {
         createFileOrFail(input);
 
         Assertions.assertThrows(PatternSyntaxException.class,
-                () -> countLinesCommand.run(new String[]{input.toString(), "[[[[["}));
+                () -> countLinesCommand.execute(new String[]{input.toString(), "[[[[["}));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class CountLinesCommandTest extends BaseTest {
         Path input = tempDir.resolve(INPUT_FILENAME);
         Files.write(input, inputLines, StandardCharsets.UTF_8);
 
-        countLinesCommand.run(new String[]{input.toString(), "Test"});
+        countLinesCommand.execute(new String[]{input.toString(), "Test"});
         Assertions.assertEquals(3, countLinesCommand.getCounter());
     }
 }

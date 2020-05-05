@@ -23,6 +23,8 @@ public class LineDiffCommandTest extends BaseTest {
     @TempDir
     Path tempDir;
     private LineDiffCommand diffCommand;
+    private final static String INPUT_FILENAME = "input1.txt";
+    private final static String OUTPUT_FILENAME = "output";
 
     @BeforeEach
     public void reinitialize() {
@@ -32,16 +34,16 @@ public class LineDiffCommandTest extends BaseTest {
     @Test
     @DisplayName("should throw an exception when called without arguments")
     public void noArguments() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> diffCommand.run(null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> diffCommand.execute(null));
     }
 
     @Test
     @DisplayName("should throw an exception when called with a wrong number of arguments")
     public void wrongNumberOfArguments() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> diffCommand.run(new String[]{"1"}));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> diffCommand.execute(new String[]{"1"}));
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> diffCommand.run(new String[]{"1", "2", "3", "4"}));
+                () -> diffCommand.execute(new String[]{"1", "2", "3", "4"}));
     }
 
     @Test
@@ -51,52 +53,89 @@ public class LineDiffCommandTest extends BaseTest {
         createFileOrFail(firstInput);
 
         Assertions.assertThrows(NoSuchFileException.class,
-                () -> diffCommand.run(new String[]{"first.txt", "second.txt", "output.txt"}));
+                () -> diffCommand.execute(new String[]{"first.txt", "second.txt", "output.txt"}));
 
         Assertions.assertThrows(NoSuchFileException.class,
-                () -> diffCommand.run(new String[]{firstInput.toString(), "second.txt", "output.txt"}));
+                () -> diffCommand.execute(new String[]{firstInput.toString(), "second.txt", "output.txt"}));
     }
 
     @Test
     @DisplayName("should throw an exception if the output folder already exists")
     public void outputFileMustNotExist() throws IOException {
-        Path firstInput = tempDir.resolve("input1.txt");
+        Path firstInput = tempDir.resolve(INPUT_FILENAME);
         createFileOrFail(firstInput);
 
         Path secondInput = tempDir.resolve("input2.txt");
         createFileOrFail(secondInput);
 
-        Path outputFolder = tempDir.resolve("output");
+        Path outputFolder = tempDir.resolve(OUTPUT_FILENAME);
         Path output = tempDir.resolve("output/both.txt");
         mkdirsOrFail(outputFolder);
         createFileOrFail(output);
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> diffCommand.run(new String[]{firstInput.toString(), secondInput.toString(), outputFolder.toString()}));
+                () -> diffCommand.execute(new String[]{firstInput.toString(), secondInput.toString(), outputFolder.toString()}));
     }
 
     @Test
     @DisplayName("regular execution")
     public void regularExecutionWithSorting() throws IOException {
-        List<String> firstInputLines = Arrays.asList("g", "b", "c");
-        List<String> secondInputLines = Arrays.asList("d", "g", "f");
+        List<String> firstInputLines = Arrays.asList("b", "c", "g");
+        List<String> secondInputLines = Arrays.asList("d", "f", "g");
 
-        Path firstInput = tempDir.resolve("input1.txt");
+        Path firstInput = tempDir.resolve(INPUT_FILENAME);
         Files.write(firstInput, firstInputLines, StandardCharsets.UTF_8);
 
         Path secondInput = tempDir.resolve("input2.txt");
         Files.write(secondInput, secondInputLines, StandardCharsets.UTF_8);
 
-        Path output = tempDir.resolve("output"); // NOPMD
+        Path output = tempDir.resolve(OUTPUT_FILENAME); // NOPMD
 
         Assertions.assertDoesNotThrow(
-                () -> diffCommand.run(new String[]{firstInput.toString(), secondInput.toString(), output.toString()}));
+                () -> diffCommand.execute(new String[]{firstInput.toString(), secondInput.toString(), output.toString()}));
 
         verifyBothFirstSecond(
                 Collections.singletonList("g"),
                 Arrays.asList("b", "c"),
                 Arrays.asList("d", "f"));
     }
+
+    @Test
+    @DisplayName("fail if unsorted")
+    public void regularExecutionUnsorted() throws IOException {
+        List<String> firstInputLines = Arrays.asList("g", "b", "c");
+        List<String> secondInputLines = Arrays.asList("d", "g", "f");
+
+        Path firstInput = tempDir.resolve(INPUT_FILENAME);
+        Files.write(firstInput, firstInputLines, StandardCharsets.UTF_8);
+
+        Path secondInput = tempDir.resolve("input2.txt");
+        Files.write(secondInput, secondInputLines, StandardCharsets.UTF_8);
+
+        Path output = tempDir.resolve(OUTPUT_FILENAME); // NOPMD
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> diffCommand.execute(new String[]{firstInput.toString(), secondInput.toString(), output.toString()}));
+    }
+
+    @Test
+    @DisplayName("fail if executing with same input file")
+    public void failIfSameInputFile() throws IOException {
+        List<String> firstInputLines = Arrays.asList("g", "b", "c");
+        List<String> secondInputLines = Arrays.asList("d", "g", "f");
+
+        Path firstInput = tempDir.resolve(INPUT_FILENAME);
+        Files.write(firstInput, firstInputLines, StandardCharsets.UTF_8);
+
+        Path secondInput = tempDir.resolve("input1.txt");
+        Files.write(secondInput, secondInputLines, StandardCharsets.UTF_8);
+
+        Path output = tempDir.resolve(OUTPUT_FILENAME); // NOPMD
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> diffCommand.execute(new String[]{firstInput.toString(), secondInput.toString(), output.toString()}));
+    }
+
 
     private void verifyBothFirstSecond(List<String> elementsBoth, List<String> elementsFirst, List<String> elementsSecond) throws IOException {
         verifyFile("both.txt", elementsBoth);

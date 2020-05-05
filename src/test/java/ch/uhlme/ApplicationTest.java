@@ -42,7 +42,7 @@ public class ApplicationTest extends BaseTest {
     @DisplayName("start linediffcommand")
     public void lineDiffCommand() throws IOException {
         List<String> firstInputLines = Arrays.asList("a", "b", "c");
-        List<String> secondInputLines = Arrays.asList("d", "a", "f");
+        List<String> secondInputLines = Arrays.asList("a", "d", "f");
 
         Path firstInput = tempDir.resolve("input1.txt");
         Files.write(firstInput, firstInputLines, StandardCharsets.UTF_8);

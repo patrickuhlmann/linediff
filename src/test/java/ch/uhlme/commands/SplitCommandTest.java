@@ -33,22 +33,22 @@ public class SplitCommandTest extends BaseTest {
     @Test
     @DisplayName("should throw an exception when called without arguments")
     public void noArguments() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> splitCommand.run(null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> splitCommand.execute(null));
     }
 
     @Test
     @DisplayName("should throw an exception when called with a wrong number of arguments")
     public void wrongNumberOfArguments() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> splitCommand.run(new String[]{"1"}));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> splitCommand.execute(new String[]{"1"}));
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> splitCommand.run(new String[]{"1", "2", "3"}));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> splitCommand.execute(new String[]{"1", "2", "3"}));
     }
 
     @Test
     @DisplayName("should throw an exception if the input file does not exist")
     public void inputFileMustExist() {
         Assertions.assertThrows(FileNotFoundException.class,
-                () -> splitCommand.run(new String[]{INPUT_FILENAME, "10"}));
+                () -> splitCommand.execute(new String[]{INPUT_FILENAME, "10"}));
     }
 
     @Test
@@ -58,13 +58,13 @@ public class SplitCommandTest extends BaseTest {
         createFileOrFail(input);
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> splitCommand.run(new String[]{input.toString(), "some"}));
+                () -> splitCommand.execute(new String[]{input.toString(), "some"}));
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> splitCommand.run(new String[]{input.toString(), "-20"}));
+                () -> splitCommand.execute(new String[]{input.toString(), "-20"}));
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> splitCommand.run(new String[]{input.toString(), "0"}));
+                () -> splitCommand.execute(new String[]{input.toString(), "0"}));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class SplitCommandTest extends BaseTest {
         createFileOrFail(output);
 
         Assertions.assertThrows(FileAlreadyExistsException.class,
-                () -> splitCommand.run(new String[]{input.toString(), "20"}));
+                () -> splitCommand.execute(new String[]{input.toString(), "20"}));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class SplitCommandTest extends BaseTest {
         Files.write(input, inputLines, StandardCharsets.UTF_8);
 
         Assertions.assertDoesNotThrow(
-                () -> splitCommand.run(new String[]{input.toString(), "5"}));
+                () -> splitCommand.execute(new String[]{input.toString(), "5"}));
 
         Path output = tempDir.resolve("input_1.txt");
 
@@ -116,7 +116,7 @@ public class SplitCommandTest extends BaseTest {
         Path input = tempDir.resolve(INPUT_FILENAME);
         Files.write(input, inputLines, StandardCharsets.UTF_8);
 
-        Assertions.assertDoesNotThrow(() -> splitCommand.run(new String[]{input.toString(), "2"}));
+        Assertions.assertDoesNotThrow(() -> splitCommand.execute(new String[]{input.toString(), "2"}));
 
         Path output1 = tempDir.resolve("input_1.txt");
         verifyFile(output1, Arrays.asList("a", "b"));
@@ -141,6 +141,6 @@ public class SplitCommandTest extends BaseTest {
         createFileOrFail(output);
 
         Assertions.assertThrows(FileAlreadyExistsException.class,
-                () -> splitCommand.run(new String[]{input.toString(), "2"}));
+                () -> splitCommand.execute(new String[]{input.toString(), "2"}));
     }
 }

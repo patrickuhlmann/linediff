@@ -10,12 +10,12 @@ public class LogUtilsTest {
     @Test
     @DisplayName("exception if initilaized with non-existant file")
     public void nonExistantFile() {
-        Assertions.assertThrows(FileNotFoundException.class, () -> LogUtils.initalizeLogging("doesnotexist.properties"));
+        Assertions.assertThrows(FileNotFoundException.class, () -> LogUtils.initializeLogging("doesnotexist.properties"));
     }
 
     @Test
     @DisplayName("no exception if initilaized with existant file")
     public void properFile() {
-        Assertions.assertDoesNotThrow(() -> LogUtils.initalizeLogging("logging.properties"));
+        Assertions.assertDoesNotThrow(() -> LogUtils.initializeLogging("logging.properties"));
     }
 }

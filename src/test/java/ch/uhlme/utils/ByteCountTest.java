@@ -3,17 +3,14 @@ package ch.uhlme.utils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
 public class ByteCountTest {
-    @SuppressWarnings("unused")
     @Test
     @DisplayName("test all steps from bytes to lots of gigabytes")
-    public void bytesToLotsOfGigabytes(@TempDir Path tempDir) {
+    public void bytesToLotsOfGigabytes() {
         List<Long> inputs = Arrays.asList(
                 512L,
                 1000L + 950L,

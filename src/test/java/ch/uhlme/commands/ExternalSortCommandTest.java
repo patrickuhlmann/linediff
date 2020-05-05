@@ -30,22 +30,22 @@ public class ExternalSortCommandTest extends BaseTest {
     @Test
     @DisplayName("should throw an exception when called without arguments")
     public void noArguments() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> sortCommand.run(null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> sortCommand.execute(null));
     }
 
     @Test
     @DisplayName("should throw an exception when called with a wrong number of arguments")
     public void wrongNumberOfArguments() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> sortCommand.run(new String[]{"1"}));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> sortCommand.execute(new String[]{"1"}));
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> sortCommand.run(new String[]{"1", "2", "3"}));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> sortCommand.execute(new String[]{"1", "2", "3"}));
     }
 
     @Test
     @DisplayName("should throw an exception if the input file does not exist")
     public void inputFilesMustExist() {
         Assertions.assertThrows(FileNotFoundException.class,
-                () -> sortCommand.run(new String[]{"input.txt", "output.txt"}));
+                () -> sortCommand.execute(new String[]{"input.txt", "output.txt"}));
     }
 
     @Test
@@ -58,7 +58,7 @@ public class ExternalSortCommandTest extends BaseTest {
         createFileOrFail(output);
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> sortCommand.run(new String[]{input.toString(), output.toString()}));
+                () -> sortCommand.execute(new String[]{input.toString(), output.toString()}));
     }
 
     @Test
@@ -71,7 +71,7 @@ public class ExternalSortCommandTest extends BaseTest {
 
         Path output = tempDir.resolve("output.txt");
 
-        Assertions.assertDoesNotThrow(() -> sortCommand.run(new String[]{input.toString(), output.toString()}));
+        Assertions.assertDoesNotThrow(() -> sortCommand.execute(new String[]{input.toString(), output.toString()}));
 
         verifyFile(output, Arrays.asList("a", "d", "f"));
     }

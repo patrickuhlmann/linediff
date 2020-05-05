@@ -7,10 +7,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Objects;
-import java.util.Random;
+import java.util.SplittableRandom;
 
 public class FileUtils {
-    private static final Random random = new Random();
+    private static final SplittableRandom random = new SplittableRandom();
 
     private FileUtils() {
     }
