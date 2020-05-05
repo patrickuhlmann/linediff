@@ -10,18 +10,24 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class SplitCommand {
+public class SplitCommand implements Command {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
-    public void run(String[] args) throws IOException {
-        logger.atInfo().log("started with %s", args);
+    @Override
+    public void execute(String[] params) throws IOException {
+        logger.atInfo().log("started with %s", params);
 
-        Tuple<Path, Integer> arguments = verifyParameters(args);
+        Tuple<Path, Integer> arguments = verifyParameters(params);
 
         Split split = new Split(arguments.getFirst(), arguments.getSecond());
         split.split();
 
         logger.atInfo().log("Process finished successfully");
+    }
+
+    @Override
+    public String getName() {
+        return "split";
     }
 
     private Tuple<Path, Integer> verifyParameters(String[] args) throws FileNotFoundException {

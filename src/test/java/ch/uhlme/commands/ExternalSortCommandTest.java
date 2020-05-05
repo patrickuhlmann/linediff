@@ -9,79 +9,67 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.List;
 
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
-public class ExternalSortCommandTest extends BaseTest {
+import static ch.uhlme.matchers.FileContentIs.fileContentIs;
+import static ch.uhlme.preparation.PrepareFile.prepareEmptyFile;
+import static ch.uhlme.preparation.PrepareFile.prepareFileWithLines;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+@SuppressWarnings({"PMD.BeanMembersShouldSerialize", "PMD.DataflowAnomalyAnalysis"})
+class ExternalSortCommandTest extends BaseTest {
     @SuppressWarnings("unused")
     @TempDir
     Path tempDir;
     private ExternalSortCommand sortCommand;
 
     @BeforeEach
-    public void reinitialize() {
+    void reinitialize() {
         sortCommand = new ExternalSortCommand();
     }
 
     @Test
-    @DisplayName("should throw an exception when called without arguments")
-    public void noArguments() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> sortCommand.run(null));
-    }
-
-    @Test
-    @DisplayName("should throw an exception when called with a wrong number of arguments")
-    public void wrongNumberOfArguments() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> sortCommand.run(new String[]{"1"}));
-
-        Assertions.assertThrows(IllegalArgumentException.class, () -> sortCommand.run(new String[]{"1", "2", "3"}));
-    }
-
-    @Test
-    @DisplayName("should throw an exception if the input file does not exist")
-    public void inputFilesMustExist() {
-        Assertions.assertThrows(FileNotFoundException.class,
-                () -> sortCommand.run(new String[]{"input.txt", "output.txt"}));
-    }
-
-    @Test
-    @DisplayName("should throw an exception if the output file already exists")
-    public void outputFileMustNotExist() throws IOException {
-        Path input = tempDir.resolve("input.txt");
-        createFileOrFail(input);
-
-        Path output = tempDir.resolve("output.txt");
-        createFileOrFail(output);
+    @DisplayName("throw an exception if called with the wrong number of arguments")
+    void givenWrongNumberOfArguments_thenThrowException() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> sortCommand.execute(null));
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> sortCommand.run(new String[]{input.toString(), output.toString()}));
+                () -> sortCommand.execute(new String[]{"1"}));
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> sortCommand.execute(new String[]{"1", "2", "3"}));
     }
 
     @Test
-    @DisplayName("regular execution")
-    public void regularExecutionWithSorting() throws IOException {
-        List<String> inputLines = Arrays.asList("d", "a", "f");
-
-        Path input = tempDir.resolve("input.txt");
-        Files.write(input, inputLines, StandardCharsets.UTF_8);
-
-        Path output = tempDir.resolve("output.txt");
-
-        Assertions.assertDoesNotThrow(() -> sortCommand.run(new String[]{input.toString(), output.toString()}));
-
-        verifyFile(output, Arrays.asList("a", "d", "f"));
+    @DisplayName("throw an exception if the input file doesn't exist")
+    void givenNonExistingInputFile_thenThrowException() {
+        Assertions.assertThrows(FileNotFoundException.class,
+                () -> sortCommand.execute(new String[]{"input.txt", "output.txt"}));
     }
 
-    private void verifyFile(Path file, List<String> elements) throws IOException {
-        List<String> lines = Files.readAllLines(file);
-        Assertions.assertEquals(elements.size(), lines.size());
+    @Test
+    @DisplayName("throw an exception if the output file already exists")
+    void givenExistingOutputFile_thenThrowException() throws IOException {
+        Path input = prepareEmptyFile(tempDir);
+        Path output = prepareEmptyFile(tempDir);
 
-        for (int i = 0; i < elements.size(); i++) {
-            Assertions.assertEquals(elements.get(i), lines.get(i));
-        }
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> sortCommand.execute(new String[]{input.toString(), output.toString()}));
+    }
+
+    @Test
+    @DisplayName("normal execution")
+    void normalExecution() throws IOException {
+        Path input = prepareFileWithLines(tempDir, Arrays.asList("d", "a", "f"));
+        Path output = tempDir.resolve("output.txt");
+
+
+        sortCommand.execute(new String[]{input.toString(), output.toString()});
+
+
+        assertThat(output, fileContentIs(Arrays.asList("a", "d", "f")));
     }
 }

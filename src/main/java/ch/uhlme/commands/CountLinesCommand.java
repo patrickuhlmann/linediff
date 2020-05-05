@@ -14,18 +14,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("PMD.BeanMembersShouldSerialize")
-public class CountLinesCommand {
+public class CountLinesCommand implements Command {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private int counter;
 
-    public void run(String[] args) throws IOException {
-        logger.atInfo().log("started with %s", args);
+    @Override
+    public void execute(String[] params) throws IOException {
+        logger.atInfo().log("started with %s", params);
 
-        Tuple<Path, Pattern> arguments = verifyParameters(args);
+        Tuple<Path, Pattern> arguments = verifyParameters(params);
 
         count(arguments.getFirst(), arguments.getSecond());
 
         logger.atInfo().log("Process finished successfully");
+    }
+
+    @Override
+    public String getName() {
+        return "countlines";
     }
 
     private Tuple<Path, Pattern> verifyParameters(String[] args) throws FileNotFoundException {

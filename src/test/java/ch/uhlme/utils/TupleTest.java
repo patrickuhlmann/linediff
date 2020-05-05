@@ -1,38 +1,44 @@
 package ch.uhlme.utils;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
+
 @SuppressWarnings("rawtypes")
-public class TupleTest {
+class TupleTest {
     @Test
-    @DisplayName("hashcode")
-    public void checkHashCode() {
+    void givenObjects_thenHashcode() {
         Tuple t1 = new Tuple<>("a", "b");
         Tuple t2 = new Tuple<>("a", "b");
         Tuple t3 = new Tuple<>("c", "d");
 
-        Assertions.assertEquals(t1.hashCode(), t2.hashCode());
-        Assertions.assertNotEquals(t1.hashCode(), t3.hashCode());
+
+        assertThat(t1.hashCode(), is(t2.hashCode()));
+        assertThat(t1.hashCode(), not(t3.hashCode()));
     }
 
     @Test
-    @DisplayName("equals")
-    public void checkEquals() {
+    void givenObjects_thenEquals() {
         Tuple t1 = new Tuple<>("a", "b");
-        Tuple t2 = new Tuple<>("a", "b");
-        Tuple t3 = new Tuple<>("c", "d");
+        Tuple t2 = new Tuple<>("z", "b");
+        Tuple t3 = new Tuple<>("a", "z");
+        Tuple t4 = new Tuple<>("a", "b");
 
-        Assertions.assertEquals(t1, t2);
-        Assertions.assertNotEquals(t1, t3);
+
+        assertThat(t1, not(""));
+        assertThat(t1, is(t1));
+        assertThat(t1, not(t2));
+        assertThat(t1, not(t3));
+        assertThat(t1, is(t4));
     }
 
     @Test
-    @DisplayName("toString")
-    public void checkToString() {
+    void checkToString() {
         Tuple t1 = new Tuple<>("a", "b");
 
-        Assertions.assertEquals("Tuple{first=a, second=b}", t1.toString());
+
+        assertThat(t1.toString(), is("Tuple{first=a, second=b}"));
     }
 }

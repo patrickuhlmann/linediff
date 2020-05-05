@@ -1,6 +1,7 @@
 package ch.uhlme.diff;
 
 import java.io.BufferedWriter;
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -10,7 +11,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 
 @SuppressWarnings("PMD.BeanMembersShouldSerialize")
-public class OutputFolder implements AutoCloseable {
+public class OutputFolder implements Closeable {
     private final BufferedWriter bothWriter;
     private final BufferedWriter onlyFirstWriter;
     private final BufferedWriter onlySecondWriter;
@@ -18,15 +19,15 @@ public class OutputFolder implements AutoCloseable {
     public OutputFolder(Path folder) throws IOException {
         Objects.requireNonNull(folder);
 
+        if (Files.exists(folder)) {
+            throw new IllegalArgumentException("The output folder mustn't exist");
+        }
+
         Files.createDirectories(folder);
 
         Path first = Paths.get(folder.toAbsolutePath() + File.separator + "first_only.txt");
         Path second = Paths.get(folder.toAbsolutePath() + File.separator + "second_only.txt");
         Path both = Paths.get(folder.toAbsolutePath() + File.separator + "both.txt");
-
-        if (Files.exists(first) || Files.exists(second) || Files.exists(both)) {
-            throw new IllegalArgumentException(String.format("Files in the output folder %s mustn't exist", folder));
-        }
 
         onlyFirstWriter = Files.newBufferedWriter(first, StandardCharsets.UTF_8);
         onlySecondWriter = Files.newBufferedWriter(second, StandardCharsets.UTF_8);
@@ -55,15 +56,9 @@ public class OutputFolder implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
-        if (bothWriter != null) {
-            bothWriter.close();
-        }
-        if (onlyFirstWriter != null) {
-            onlyFirstWriter.close();
-        }
-        if (onlySecondWriter != null) {
-            onlySecondWriter.close();
-        }
+    public void close() throws IOException {
+        bothWriter.close();
+        onlyFirstWriter.close();
+        onlySecondWriter.close();
     }
 }

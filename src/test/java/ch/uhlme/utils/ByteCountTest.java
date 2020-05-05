@@ -1,19 +1,19 @@
 package ch.uhlme.utils;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
-public class ByteCountTest {
-    @SuppressWarnings("unused")
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+
+@SuppressWarnings({"PMD.BeanMembersShouldSerialize", "PMD.DataflowAnomalyAnalysis"})
+class ByteCountTest {
     @Test
-    @DisplayName("test all steps from bytes to lots of gigabytes")
-    public void bytesToLotsOfGigabytes(@TempDir Path tempDir) {
+    @DisplayName("all level up to terabytes")
+    void bytesToLotsOfGigabytes() {
         List<Long> inputs = Arrays.asList(
                 512L,
                 1000L + 950L,
@@ -28,7 +28,7 @@ public class ByteCountTest {
                 -2 * 1000 * 1000 * 1000 * 1000L
         );
 
-        List<String> outputs = Arrays.asList( // NOPMD
+        List<String> outputs = Arrays.asList(
                 "512 B",
                 "2.0 kB",
                 "2.0 kB",
@@ -44,8 +44,8 @@ public class ByteCountTest {
 
         for (int i=0; i<inputs.size(); i++) {
             ByteCount bc = new ByteCount(inputs.get(i));
-            Assertions.assertEquals(outputs.get(i), bc.toString());
-            Assertions.assertEquals(inputs.get(i), bc.getCount());
+            assertThat(bc.toString(), is(outputs.get(i)));
+            assertThat(bc.getCount(), is(inputs.get(i)));
         }
     }
 }

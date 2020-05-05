@@ -3,7 +3,10 @@ package ch.uhlme.sorting;// based on Public Domain Code from https://www.ashishs
 import ch.uhlme.utils.ByteCount;
 import com.google.common.flogger.FluentLogger;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,30 +41,22 @@ public class ExternalSort {
 
         List<Path> splitedFiles = new ArrayList<>();
         try (BufferedReader fbr = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
-            List<String> lines = new ArrayList<>();
+            List<String> lines = new ArrayList<>(); // NOPMD
             String currentLine = "";
-            try {
-                while (currentLine != null) {
-                    logger.atFine().atMostEvery(10, TimeUnit.SECONDS).log("free memory: %s", new ByteCount(Runtime.getRuntime().freeMemory()));
-                    long currentSize = 0;
+            while (currentLine != null) {
+                logger.atFine().atMostEvery(10, TimeUnit.SECONDS).log("free memory: %s", new ByteCount(Runtime.getRuntime().freeMemory()));
+                long currentSize = 0;
+                currentLine = fbr.readLine();
+                while ((currentSize < splitSize)
+                        && (currentLine != null)) {
+                    lines.add(currentLine);
+                    currentSize += currentLine.length() * 2 + 40; // java uses 16 bits per character + 40 bytes of overhead (estimated)
                     currentLine = fbr.readLine();
-                    while ((currentSize < splitSize)
-                            && (currentLine != null)) {
-                        lines.add(currentLine);
-                        currentSize += currentLine.length() * 2 + 40; // java uses 16 bits per character + 40 bytes of overhead (estimated)
-                        currentLine = fbr.readLine();
-                    }
-                    if (!lines.isEmpty()) {
-                        splitedFiles.add(sortAndSave(lines));
-                    }
-                    lines.clear();
                 }
-            } catch (EOFException oef) {
-                logger.atFine().log("EOF Exception");
                 if (!lines.isEmpty()) {
                     splitedFiles.add(sortAndSave(lines));
-                    lines.clear();
                 }
+                lines.clear();
             }
         }
 
@@ -99,7 +94,7 @@ public class ExternalSort {
                 fbw.newLine();
                 if (bfb.isEmpty()) {
                     bfb.fbr.close();
-                    if (Files.deleteIfExists(bfb.originalFile)) {
+                    if (!Files.deleteIfExists(bfb.originalFile)) {
                         logger.atWarning().log("Unable to delete temporary file %s", bfb.originalFile);
                     }
                 } else {
@@ -129,12 +124,7 @@ public class ExternalSort {
         }
 
         private void reload() throws IOException {
-            try {
-                empty = (this.cache = fbr.readLine()) == null;
-            } catch (EOFException oef) {
-                empty = true;
-                cache = null; // NOPMD
-            }
+            empty = (this.cache = fbr.readLine()) == null;
         }
 
         public void close() throws IOException {

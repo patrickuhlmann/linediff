@@ -14,17 +14,23 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class DecodeURLCommand {
+public class DecodeURLCommand implements Command {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
-    public void run(String[] args) throws IOException {
-        logger.atInfo().log("started with %s", args);
+    @Override
+    public void execute(String[] params) throws IOException {
+        logger.atInfo().log("started with %s", params);
 
-        Tuple<Path, Path> arguments = verifyParameters(args);
+        Tuple<Path, Path> arguments = verifyParameters(params);
 
         decode(arguments.getFirst(), arguments.getSecond());
 
         logger.atInfo().log("Process finished successfully");
+    }
+
+    @Override
+    public String getName() {
+        return "decodeurl";
     }
 
     private Tuple<Path, Path> verifyParameters(String[] args) throws FileNotFoundException, FileAlreadyExistsException {

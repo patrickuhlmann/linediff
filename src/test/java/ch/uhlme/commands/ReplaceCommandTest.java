@@ -9,87 +9,74 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.List;
 
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
-public class ReplaceCommandTest extends BaseTest {
-    private final static String INPUT_FILENAME = "input.txt";
+import static ch.uhlme.matchers.FileContentIs.fileContentIs;
+import static ch.uhlme.preparation.PrepareFile.prepareEmptyFile;
+import static ch.uhlme.preparation.PrepareFile.prepareFileWithLines;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+@SuppressWarnings({"PMD.BeanMembersShouldSerialize", "PMD.DataflowAnomalyAnalysis"})
+class ReplaceCommandTest extends BaseTest {
     @SuppressWarnings("unused")
     @TempDir
     Path tempDir;
     private ReplaceCommand replaceCommand;
 
     @BeforeEach
-    public void reinitialize() {
+    void reinitialize() {
         replaceCommand = new ReplaceCommand();
     }
 
     @Test
-    @DisplayName("should throw an exception when called without arguments")
-    public void noArguments() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> replaceCommand.run(null));
+    @DisplayName("throw exception if called with the wrong number of arguments")
+    void givenWrongNumberOfArguments_thenThrowExeption() throws IOException {
+        Path input = prepareEmptyFile(tempDir);
+
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> replaceCommand.execute(null));
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> replaceCommand.execute(new String[]{input.toString(), "2", "3"}));
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> replaceCommand.execute(new String[]{input.toString(), "2", "3", "4", "5"}));
     }
 
-    @Test
-    @DisplayName("should throw an exception when called with a wrong number of arguments")
-    public void wrongNumberOfArguments() throws IOException {
-        Path input = tempDir.resolve(INPUT_FILENAME);
-        createFileOrFail(input);
-
-        Assertions.assertThrows(IllegalArgumentException.class, () -> replaceCommand.run(new String[]{input.toString(), "2", "3"}));
-
-        Assertions.assertThrows(IllegalArgumentException.class, () -> replaceCommand.run(new String[]{input.toString(), "2", "3", "4", "5"}));
-    }
-
 
     @Test
-    @DisplayName("should throw an exception if the input file does not exist")
-    public void inputFileMustExist() {
-        Path input = tempDir.resolve(INPUT_FILENAME); // NOPMD
+    @DisplayName("throw exception if the input file doesn't exist")
+    void givenInputFileNonExisting_thenThrowException() {
+        Path input = tempDir.resolve("inputnonexisting.txt");
 
         Assertions.assertThrows(FileNotFoundException.class,
-                () -> replaceCommand.run(new String[]{input.toString(), "2", "3", "4"}));
+                () -> replaceCommand.execute(new String[]{input.toString(), "2", "3", "4"}));
     }
 
     @Test
-    @DisplayName("should throw an exception if the output file does already exist")
-    public void outputFileMustntExist() throws IOException {
-        Path input = tempDir.resolve(INPUT_FILENAME);
-        createFileOrFail(input);
+    @DisplayName("throw exception if the output file already exists")
+    void outputFileMustntExist() throws IOException {
+        Path input = prepareEmptyFile(tempDir);
+        Path output = prepareEmptyFile(tempDir);
 
-        Path output = tempDir.resolve("output.txt");
-        createFileOrFail(output);
 
         Assertions.assertThrows(FileAlreadyExistsException.class,
-                () -> replaceCommand.run(new String[]{input.toString(), output.toString(), "3", "4"}));
+                () -> replaceCommand.execute(new String[]{input.toString(), output.toString(), "3", "4"}));
     }
 
     @Test
-    @DisplayName("regular replace")
-    public void replaceNormal() throws Exception {
-        List<String> inputLines = Arrays.asList("test 123 test", "main 123 main");
-        List<String> outputLines = Arrays.asList("test test", "main main");
-
-        Path input = tempDir.resolve(INPUT_FILENAME);
-        Files.write(input, inputLines, StandardCharsets.UTF_8);
+    @DisplayName("regular execution")
+    void regularExecution() throws Exception {
+        Path input = prepareFileWithLines(tempDir, Arrays.asList("test 123 test", "main 123 main"));
         Path output = tempDir.resolve("output.txt");
 
-        replaceCommand.run(new String[]{input.toString(), output.toString(), "\\s[0-9]*\\s", " "});
 
-        verifyFile(output, outputLines);
-    }
+        replaceCommand.execute(new String[]{input.toString(), output.toString(), "\\s[0-9]*\\s", " "});
 
-    private void verifyFile(Path file, List<String> elements) throws IOException {
-        List<String> lines = Files.readAllLines(file);
-        Assertions.assertEquals(elements.size(), lines.size());
 
-        for (int i = 0; i < elements.size(); i++) {
-            Assertions.assertEquals(elements.get(i), lines.get(i));
-        }
+        assertThat(output, fileContentIs(Arrays.asList("test test", "main main")));
     }
 }

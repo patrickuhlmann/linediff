@@ -1,10 +1,20 @@
-﻿![GitHub](https://img.shields.io/github/license/patrickuhlmann/linedifference)
-[![Build Status](https://travis-ci.com/patrickuhlmann/linedifference.svg?branch=master)](https://travis-ci.com/patrickuhlmann/linedifference)
-[![codecov](https://codecov.io/gh/patrickuhlmann/linedifference/branch/master/graph/badge.svg)](https://codecov.io/gh/patrickuhlmann/linedifference)
+﻿License:
+![GitHub](https://img.shields.io/github/license/patrickuhlmann/linedifference)
+
+Build: [![Build Status](https://travis-ci.com/patrickuhlmann/linedifference.svg?branch=master)](https://travis-ci.com/patrickuhlmann/linedifference)
+
+Metrics: 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=alert_status)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=security_rating)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
+
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=bugs)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=code_smells)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=coverage)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=ncloc)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=sqale_index)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
 
 ## Getting Started
 

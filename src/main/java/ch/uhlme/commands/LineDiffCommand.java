@@ -3,27 +3,30 @@ package ch.uhlme.commands;
 import ch.uhlme.diff.InputFile;
 import ch.uhlme.diff.LineDiff;
 import ch.uhlme.diff.OutputFolder;
-import ch.uhlme.sorting.ExternalSort;
 import ch.uhlme.utils.FileUtils;
 import ch.uhlme.utils.Tuple;
 import com.google.common.flogger.FluentLogger;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class LineDiffCommand {
+public class LineDiffCommand implements Command {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
-    public void run(String[] args) throws Exception {
-        logger.atInfo().log("started with %s", args);
+    @Override
+    public void execute(String[] params) throws IOException {
+        logger.atInfo().log("started with %s", params);
 
-        Tuple<Path, Path> inputFiles = this.verifyParameters(args);
-        this.runDiff(inputFiles.getFirst(), inputFiles.getSecond(), Paths.get(args[2]));
+        Tuple<Path, Path> inputFiles = this.verifyParameters(params);
+        this.runDiff(inputFiles.getFirst(), inputFiles.getSecond(), Paths.get(params[2]));
 
         logger.atInfo().log("Process finished successfully");
+    }
+
+    @Override
+    public String getName() {
+        return "linediff";
     }
 
     private Tuple<Path, Path> verifyParameters(String[] args) throws IOException {
@@ -33,13 +36,21 @@ public class LineDiffCommand {
 
         logger.atInfo().log("Verifying parameters");
 
-        Path firstPath = sortInputFileIfNeeded(Paths.get(args[0]), Paths.get(args[2]));
-        Path secondPath = sortInputFileIfNeeded(Paths.get(args[1]), Paths.get(args[2]));
+        if (Paths.get(args[0]).equals(Paths.get(args[1]))) {
+            throw new IllegalArgumentException("Please specify two different input files");
+        }
+
+        Path firstPath = Paths.get(args[0]);
+        Path secondPath = Paths.get(args[1]);
+
+        if (!FileUtils.areLinesInFileSorted(firstPath) || !FileUtils.areLinesInFileSorted(secondPath)) {
+            throw new IllegalArgumentException("One of the input files is unsorted. Please sort if first");
+        }
 
         return new Tuple<>(firstPath, secondPath);
     }
 
-    private void runDiff(Path firstPath, Path secondPath, Path outputFolderPath) throws Exception {
+    private void runDiff(Path firstPath, Path secondPath, Path outputFolderPath) throws IOException {
         try (
                 InputFile firstFile = new InputFile(firstPath);
                 InputFile secondFile = new InputFile(secondPath);
@@ -47,24 +58,6 @@ public class LineDiffCommand {
         ) {
             LineDiff diff = new LineDiff(firstFile, secondFile, outputFolder);
             diff.process();
-        }
-    }
-
-    private Path sortInputFileIfNeeded(Path input, Path output) throws IOException {
-        if (!FileUtils.areLinesInFileSorted(input)) {
-            System.out.println(String.format("Input file %s is unsorted, sorting...", input));
-            if (!Files.exists(output) && Files.createDirectories(output) == null) {
-                throw new IOException(String.format("Unable to create directory %s", output));
-            }
-            ExternalSort sort = new ExternalSort(); //NOPMD
-            Path sortedInput = Paths.get(output.toAbsolutePath() + File.separator + "sorted_" + input.getFileName());
-            if (Files.exists(sortedInput)) {
-                throw new IllegalArgumentException(String.format("Input file %s is unsorted and a sorted copy in the output folder can't be created, file already exists", input));
-            }
-            sort.sort(input, sortedInput);
-            return sortedInput;
-        } else {
-            return input;
         }
     }
 }

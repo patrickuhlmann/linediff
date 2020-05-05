@@ -9,7 +9,7 @@ import java.nio.file.Path;
 public class BaseTest {
     static {
         try {
-            LogUtils.initalizeLogging("logging.properties");
+            LogUtils.initializeLogging("logging.properties");
         } catch (IOException e) {
             e.printStackTrace();
         }

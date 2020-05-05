@@ -8,109 +8,85 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.List;
 
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
-public class ExternalSortTest extends BaseTest {
-    private final static String INPUT_FILENAME = "input.txt";
-    private final static String OUTPUT_FILENAME = "output.txt";
+import static ch.uhlme.matchers.FileContentIs.fileContentIs;
+import static ch.uhlme.preparation.PrepareFile.prepareFileWithLines;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+@SuppressWarnings({"PMD.BeanMembersShouldSerialize", "PMD.DataflowAnomalyAnalysis"})
+class ExternalSortTest extends BaseTest {
     @SuppressWarnings("unused")
     @TempDir
     Path tempDir;
 
     @Test
-    @DisplayName("should throw an exception when called with null arguments")
-    public void noArguments() {
-        ExternalSort ext = new ExternalSort(); // NOPMD
-        Path p = Paths.get("test"); // NOPMD
+    @DisplayName("throw exception with null arguments")
+    void givenNullArguments_thenThrowException() {
+        ExternalSort ext = new ExternalSort();
+        Path p = Paths.get("test");
 
-        Assertions.assertThrows(NullPointerException.class, () -> ext.sort(p, null));
-        Assertions.assertThrows(NullPointerException.class, () -> ext.sort(null, p));
+
+        Assertions.assertThrows(NullPointerException.class,
+                () -> ext.sort(p, null));
+
+        Assertions.assertThrows(NullPointerException.class,
+                () -> ext.sort(null, p));
     }
 
     @Test
     @DisplayName("sort small file")
-    public void sortSmallFile() throws IOException {
-        List<String> expected = Arrays.asList("a", "b", "c");
+    void givenSmallFile_thenSort() throws IOException {
+        Path input = prepareFileWithLines(tempDir, Arrays.asList("c", "b", "a"));
+        Path output = tempDir.resolve("smalloutput.txt");
 
-        Path f1 = tempDir.resolve(INPUT_FILENAME);
-        Files.write(f1, Arrays.asList("c", "b", "a"), StandardCharsets.UTF_8);
-        Path f2 = tempDir.resolve(OUTPUT_FILENAME);
 
         ExternalSort ext = new ExternalSort();
-        ext.sort(f1, f2);
+        ext.sort(input, output);
 
-        verifyFile(f2, expected);
+
+        assertThat(output, fileContentIs(Arrays.asList("a", "b", "c")));
     }
 
     @Test
-    @DisplayName("sort small file with duplicates")
-    public void sortSmallFileWithDuplicates() throws IOException {
-        List<String> expected = Arrays.asList("a", "b", "b", "b", "c");
+    @DisplayName("sort small file with duplicate lines")
+    void givenSmallFileWithDuplicateLines_thenSort() throws IOException {
+        Path input = prepareFileWithLines(tempDir, Arrays.asList("b", "c", "b", "b", "a"));
+        Path output = tempDir.resolve("smallduplicate.txt");
 
-        Path f1 = tempDir.resolve(INPUT_FILENAME);
-        Files.write(f1, Arrays.asList("b", "c", "b", "b", "a"), StandardCharsets.UTF_8);
-        Path f2 = tempDir.resolve(OUTPUT_FILENAME);
 
         ExternalSort ext = new ExternalSort();
-        ext.sort(f1, f2);
+        ext.sort(input, output);
 
-        verifyFile(f2, expected);
+
+        assertThat(output, fileContentIs(Arrays.asList("a", "b", "b", "b", "c")));
     }
 
     @Test
     @DisplayName("sort small file with empty lines")
-    public void sortSmallFileWithEmptyLines() throws IOException {
-        List<String> expected = Arrays.asList("", "", "", "a", "b", "b", "b", "c");
+    void givenSmallFileWithEmptyLines_thenSort() throws IOException {
+        Path f1 = prepareFileWithLines(tempDir, Arrays.asList("b", "c", "b", "b", "", "", "", "a"));
+        Path f2 = tempDir.resolve("smallempty.txt");
 
-        Path f1 = tempDir.resolve(INPUT_FILENAME);
-        Files.write(f1, Arrays.asList("b", "c", "b", "b", "", "", "", "a"), StandardCharsets.UTF_8);
-        Path f2 = tempDir.resolve(OUTPUT_FILENAME);
 
         ExternalSort ext = new ExternalSort();
         ext.sort(f1, f2);
 
-        verifyFile(f2, expected);
+
+        assertThat(f2, fileContentIs(Arrays.asList("", "", "", "a", "b", "b", "b", "c")));
     }
 
     @Test
-    @DisplayName("sort file with splitting")
-    public void sortFileWithSplitting() throws IOException {
-        Path f1 = tempDir.resolve(INPUT_FILENAME);
+    @DisplayName("sort files that needs splitting")
+    void givenFileThatNeedsSplitting_thenSort() throws IOException {
+        Path input = tempDir.resolve("large.txt");
+        FileUtils.generateFileWithRandomLines(input, 100);
+        Path output = tempDir.resolve("output.txt");
+        ExternalSort ext = new ExternalSort(700);
 
-        FileUtils.generateFileWithRandomLines(f1, 100);
 
-        Path f2 = tempDir.resolve(OUTPUT_FILENAME); // NOPMD
-
-        ExternalSort ext = new ExternalSort(700); // NOPMD
-
-        Assertions.assertDoesNotThrow(() -> ext.sort(f1, f2));
-    }
-
-    @Test
-    @DisplayName("sort file with splitting smaller than lines")
-    public void sortFileSplitSmallerThanLines() throws IOException {
-        Path f1 = tempDir.resolve(INPUT_FILENAME);
-
-        FileUtils.generateFileWithRandomLines(f1, 2);
-
-        Path f2 = tempDir.resolve(OUTPUT_FILENAME); // NOPMD
-
-        ExternalSort ext = new ExternalSort(300); // NOPMD
-        Assertions.assertDoesNotThrow(() -> ext.sort(f1, f2));
-    }
-
-    private void verifyFile(Path file, List<String> elements) throws IOException {
-        List<String> lines = Files.readAllLines(file);
-        Assertions.assertEquals(elements.size(), lines.size());
-
-        for (int i=0; i<elements.size(); i++) {
-            Assertions.assertEquals(elements.get(i), lines.get(i));
-        }
+        Assertions.assertDoesNotThrow(() -> ext.sort(input, output));
     }
 }

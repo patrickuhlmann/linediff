@@ -1,6 +1,7 @@
 package ch.uhlme.commands;
 
 import ch.uhlme.BaseTest;
+import ch.uhlme.matchers.FileContentIs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -9,87 +10,74 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
-import java.util.List;
 
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
-public class DecodeURLCommandTest extends BaseTest {
-    private final static String INPUT_FILENAME = "input.txt";
+import static ch.uhlme.preparation.PrepareFile.prepareEmptyFile;
+import static ch.uhlme.preparation.PrepareFile.prepareFileWithLines;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+@SuppressWarnings({"PMD.BeanMembersShouldSerialize", "PMD.DataflowAnomalyAnalysis"})
+class DecodeURLCommandTest extends BaseTest {
     @SuppressWarnings("unused")
     @TempDir
     Path tempDir;
     private DecodeURLCommand decodeURLCommand;
 
     @BeforeEach
-    public void reinitialize() {
+    void reinitialize() {
         decodeURLCommand = new DecodeURLCommand();
     }
 
     @Test
-    @DisplayName("should throw an exception when called without arguments")
-    public void noArguments() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> decodeURLCommand.run(null));
+    @DisplayName("throw an exception if called with the wrong number of arguments")
+    void givenWrongNumberOfArguments_thenThrowException() throws IOException {
+        Path input = prepareEmptyFile(tempDir);
+
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> decodeURLCommand.execute(null));
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> decodeURLCommand.execute(new String[]{input.toString()}));
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> decodeURLCommand.execute(new String[]{input.toString(), "1", "2"}));
     }
 
-    @Test
-    @DisplayName("should throw an exception when called with a wrong number of arguments")
-    public void wrongNumberOfArguments() throws IOException {
-        Path input = tempDir.resolve(INPUT_FILENAME);
-        createFileOrFail(input);
-
-        Assertions.assertThrows(IllegalArgumentException.class, () -> decodeURLCommand.run(new String[]{input.toString()}));
-
-        Assertions.assertThrows(IllegalArgumentException.class, () -> decodeURLCommand.run(new String[]{input.toString(), "1", "2"}));
-    }
-
 
     @Test
-    @DisplayName("should throw an exception if the input file does not exist")
-    public void inputFileMustExist() {
-        Path input = tempDir.resolve(INPUT_FILENAME); // NOPMD
+    @DisplayName("throw an exception if the input file doesn't exist")
+    void givenNonExistingInputFile_thenThrowException() {
+        Path input = tempDir.resolve("nonexistinginput.txt");
+
 
         Assertions.assertThrows(FileNotFoundException.class,
-                () -> decodeURLCommand.run(new String[]{input.toString(), "2"}));
+                () -> decodeURLCommand.execute(new String[]{input.toString(), "2"}));
     }
 
     @Test
-    @DisplayName("should throw an exception if the output file does already exist")
-    public void outputFileMustntExist() throws IOException {
-        Path input = tempDir.resolve(INPUT_FILENAME);
-        createFileOrFail(input);
+    @DisplayName("throw exception if the output file already exists")
+    void givenExistingOutputFile_thenThrowException() throws IOException {
+        Path input = prepareEmptyFile(tempDir);
+        Path output = prepareEmptyFile(tempDir);
 
-        Path output = tempDir.resolve("output.txt");
-        createFileOrFail(output);
 
         Assertions.assertThrows(FileAlreadyExistsException.class,
-                () -> decodeURLCommand.run(new String[]{input.toString(), output.toString()}));
+                () -> decodeURLCommand.execute(new String[]{input.toString(), output.toString()}));
     }
 
     @Test
-    @DisplayName("regular decode")
-    public void replaceNormal() throws Exception {
-        List<String> inputLines = Collections.singletonList("%C3%9Cber");
-        List<String> outputLines = Collections.singletonList("Über");
-
-        Path input = tempDir.resolve(INPUT_FILENAME);
-        Files.write(input, inputLines, StandardCharsets.UTF_8);
+    @DisplayName("normal execution")
+    void normalExecution() throws Exception {
+        Path input = prepareFileWithLines(tempDir, Collections.singletonList("%C3%9Cber"));
         Path output = tempDir.resolve("output.txt");
 
-        decodeURLCommand.run(new String[]{input.toString(), output.toString()});
 
-        verifyFile(output, outputLines);
-    }
+        decodeURLCommand.execute(new String[]{input.toString(), output.toString()});
 
-    private void verifyFile(Path file, List<String> elements) throws IOException {
-        List<String> lines = Files.readAllLines(file);
-        Assertions.assertEquals(elements.size(), lines.size());
 
-        for (int i = 0; i < elements.size(); i++) {
-            Assertions.assertEquals(elements.get(i), lines.get(i));
-        }
+        assertThat(output, FileContentIs.fileContentIs("Über"));
     }
 }
