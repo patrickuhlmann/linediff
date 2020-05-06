@@ -35,8 +35,6 @@ public class InputFile implements Closeable {
 
     @Override
     public void close() throws IOException {
-        if (this.reader != null) {
-            this.reader.close();
-        }
+        this.reader.close();
     }
 }

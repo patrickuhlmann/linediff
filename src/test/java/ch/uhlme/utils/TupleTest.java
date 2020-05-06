@@ -21,11 +21,15 @@ public class TupleTest {
     @DisplayName("equals")
     public void checkEquals() {
         Tuple t1 = new Tuple<>("a", "b");
-        Tuple t2 = new Tuple<>("a", "b");
-        Tuple t3 = new Tuple<>("c", "d");
+        Tuple t2 = new Tuple<>("z", "b");
+        Tuple t3 = new Tuple<>("a", "z");
+        Tuple t4 = new Tuple<>("a", "b");
 
-        Assertions.assertEquals(t1, t2);
+        Assertions.assertEquals(t1, t1);
+        Assertions.assertNotEquals(t1, "");
+        Assertions.assertNotEquals(t1, t2);
         Assertions.assertNotEquals(t1, t3);
+        Assertions.assertEquals(t1, t4);
     }
 
     @Test

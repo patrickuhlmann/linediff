@@ -23,10 +23,14 @@ public class ApplicationTest extends BaseTest {
     Path tempDir;
 
     @Test
-    @DisplayName("should throw an exception when called with null arguments")
+    @DisplayName("should throw an exception when called with null or no arguments")
     public void noArguments() {
         Assertions.assertThrows(IllegalArgumentException.class, () ->
                 Application.main(null)
+        );
+
+        Assertions.assertThrows(IllegalArgumentException.class, () ->
+                Application.main(new String[]{})
         );
     }
 

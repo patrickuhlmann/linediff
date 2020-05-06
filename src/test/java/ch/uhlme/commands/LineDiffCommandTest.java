@@ -24,6 +24,7 @@ public class LineDiffCommandTest extends BaseTest {
     Path tempDir;
     private LineDiffCommand diffCommand;
     private final static String INPUT_FILENAME = "input1.txt";
+    private final static String INPUT2_FILENAME = "input2.txt";
     private final static String OUTPUT_FILENAME = "output";
 
     @BeforeEach
@@ -65,7 +66,7 @@ public class LineDiffCommandTest extends BaseTest {
         Path firstInput = tempDir.resolve(INPUT_FILENAME);
         createFileOrFail(firstInput);
 
-        Path secondInput = tempDir.resolve("input2.txt");
+        Path secondInput = tempDir.resolve(INPUT2_FILENAME);
         createFileOrFail(secondInput);
 
         Path outputFolder = tempDir.resolve(OUTPUT_FILENAME);
@@ -86,7 +87,7 @@ public class LineDiffCommandTest extends BaseTest {
         Path firstInput = tempDir.resolve(INPUT_FILENAME);
         Files.write(firstInput, firstInputLines, StandardCharsets.UTF_8);
 
-        Path secondInput = tempDir.resolve("input2.txt");
+        Path secondInput = tempDir.resolve(INPUT2_FILENAME);
         Files.write(secondInput, secondInputLines, StandardCharsets.UTF_8);
 
         Path output = tempDir.resolve(OUTPUT_FILENAME); // NOPMD
@@ -101,15 +102,33 @@ public class LineDiffCommandTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("fail if unsorted")
-    public void regularExecutionUnsorted() throws IOException {
+    @DisplayName("fail if first unsorted")
+    public void failExecutionFirstUnsorted() throws IOException {
         List<String> firstInputLines = Arrays.asList("g", "b", "c");
-        List<String> secondInputLines = Arrays.asList("d", "g", "f");
+        List<String> secondInputLines = Arrays.asList("a", "b", "c");
 
         Path firstInput = tempDir.resolve(INPUT_FILENAME);
         Files.write(firstInput, firstInputLines, StandardCharsets.UTF_8);
 
-        Path secondInput = tempDir.resolve("input2.txt");
+        Path secondInput = tempDir.resolve(INPUT2_FILENAME);
+        Files.write(secondInput, secondInputLines, StandardCharsets.UTF_8);
+
+        Path output = tempDir.resolve(OUTPUT_FILENAME); // NOPMD
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> diffCommand.execute(new String[]{firstInput.toString(), secondInput.toString(), output.toString()}));
+    }
+
+    @Test
+    @DisplayName("fail if second unsorted")
+    public void failExecutionSecondUnsorted() throws IOException {
+        List<String> firstInputLines = Arrays.asList("a", "b", "c");
+        List<String> secondInputLines = Arrays.asList("h", "g", "f");
+
+        Path firstInput = tempDir.resolve(INPUT_FILENAME);
+        Files.write(firstInput, firstInputLines, StandardCharsets.UTF_8);
+
+        Path secondInput = tempDir.resolve(INPUT2_FILENAME);
         Files.write(secondInput, secondInputLines, StandardCharsets.UTF_8);
 
         Path output = tempDir.resolve(OUTPUT_FILENAME); // NOPMD

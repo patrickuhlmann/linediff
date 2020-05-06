@@ -57,14 +57,8 @@ public class OutputFolder implements Closeable {
 
     @Override
     public void close() throws IOException {
-        if (bothWriter != null) {
-            bothWriter.close();
-        }
-        if (onlyFirstWriter != null) {
-            onlyFirstWriter.close();
-        }
-        if (onlySecondWriter != null) {
-            onlySecondWriter.close();
-        }
+        bothWriter.close();
+        onlyFirstWriter.close();
+        onlySecondWriter.close();
     }
 }
