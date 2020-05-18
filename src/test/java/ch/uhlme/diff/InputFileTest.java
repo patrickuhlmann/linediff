@@ -40,9 +40,9 @@ class InputFileTest extends BaseTest {
     void normalExecution() throws IOException {
         Path filePath = prepareEmptyFile(tempDir);
 
-
         Assertions.assertDoesNotThrow(() -> {
             new InputFile(filePath);
         });
+
     }
 }

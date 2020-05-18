@@ -53,7 +53,7 @@ All patterns are Java 8 patterns. You find a reference here: https://docs.oracle
 
 ## Building
 
-It uses JDK 8
+It uses JDK 11
 
  * `./gradlew jar` <br>
 Creates a jar that can be executed
@@ -61,6 +61,8 @@ Creates a jar that can be executed
  * `./gradlew check` <br>
 Executes the unit tests and generates various reports (unit test, coverage, pmd)
 
+ * `./gradlew pitest` <br>
+Executes mutation testing, note that the findings are not necessarily bugs
 
 ## License
 

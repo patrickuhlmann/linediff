@@ -1,5 +1,6 @@
 package ch.uhlme;
 
+import ch.uhlme.commands.CountLinesCommand;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import java.util.Collections;
 import static ch.uhlme.matchers.FileContentIs.fileContentIs;
 import static ch.uhlme.preparation.PrepareFile.prepareFileWithLines;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.StringContains.containsString;
 
 @SuppressWarnings({"PMD.BeanMembersShouldSerialize", "PMD.DataflowAnomalyAnalysis"})
 class ApplicationTest extends BaseTest {
@@ -23,13 +25,25 @@ class ApplicationTest extends BaseTest {
     @Test
     @DisplayName("throw an exception when called with null or no arguments")
     void givenNullOrNoArgument_thenThrowException() {
-        Assertions.assertThrows(IllegalArgumentException.class,
+        CountLinesCommand clc = new CountLinesCommand();
+
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> Application.main(null)
         );
+        assertThat(e.getMessage(), containsString(clc.getName()));
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> Application.main(new String[]{})
         );
+    }
+
+    @Test
+    @DisplayName("throw an exception when called with null or no arguments")
+    void givenUnknownCommand_thenExecute() {
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
+                () -> Application.main(new String[]{"mycommand"})
+        );
+        assertThat(e.getMessage(), containsString("not found"));
     }
 
     @Test

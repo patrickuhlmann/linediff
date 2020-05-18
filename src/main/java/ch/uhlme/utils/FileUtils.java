@@ -16,7 +16,7 @@ public class FileUtils {
     }
 
     public static void deleteRecursive(Path path) throws IOException {
-        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(path, new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 Files.delete(file);
@@ -53,7 +53,7 @@ public class FileUtils {
     public static void generateFileWithRandomLines(Path path, long lines) throws IOException {
         Objects.requireNonNull(path);
 
-        if (lines < 0) {
+        if (lines <= 0) {
             throw new IllegalArgumentException("lines must be positive");
         }
 
