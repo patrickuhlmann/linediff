@@ -6,16 +6,18 @@ import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
 
-public class LogUtilsTest {
+class LogUtilsTest {
     @Test
-    @DisplayName("exception if initilaized with non-existant file")
-    public void nonExistantFile() {
-        Assertions.assertThrows(FileNotFoundException.class, () -> LogUtils.initializeLogging("doesnotexist.properties"));
+    @DisplayName("throws exception if the config file does not exist")
+    void givenFileNotExist_throwException() {
+        Assertions.assertThrows(FileNotFoundException.class,
+                () -> LogUtils.initializeLogging("doesnotexist.properties"));
     }
 
     @Test
-    @DisplayName("no exception if initilaized with existant file")
-    public void properFile() {
-        Assertions.assertDoesNotThrow(() -> LogUtils.initializeLogging("logging.properties"));
+    @DisplayName("normal initialization")
+    void regularException() {
+        Assertions.assertDoesNotThrow(
+                () -> LogUtils.initializeLogging("logging.properties"));
     }
 }

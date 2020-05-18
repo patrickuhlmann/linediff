@@ -8,100 +8,116 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
-public class FileUtilsTest extends BaseTest {
+import static ch.uhlme.matchers.FileExists.fileExists;
+import static ch.uhlme.matchers.FileNotExists.fileNotExists;
+import static ch.uhlme.preparation.PrepareFile.prepareEmptyFile;
+import static ch.uhlme.preparation.PrepareFile.prepareFileWithLines;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.core.Is.is;
+
+@SuppressWarnings({"PMD.BeanMembersShouldSerialize", "PMD.DataflowAnomalyAnalysis"})
+class FileUtilsTest extends BaseTest {
     @SuppressWarnings("unused")
     @TempDir
     Path tempDir;
 
+    Path createOutputFolder() throws IOException {
+        Path filePath = tempDir.resolve("output");
+        return Files.createDirectory(filePath);
+    }
+
     @Test
     @DisplayName("lines are sorted")
-    public void linesSorted() throws IOException {
-        List<String> sortedLines = Arrays.asList("abc", "def");
+    void givenFile_thenSorted() throws IOException {
+        Path inputFile = prepareFileWithLines(tempDir, Arrays.asList("abc", "def"));
 
-        Path filePath = tempDir.resolve("input1.txt");
-        Files.write(filePath, sortedLines, StandardCharsets.UTF_8);
 
-        Assertions.assertTrue(FileUtils.areLinesInFileSorted(filePath));
+        Assertions.assertTrue(FileUtils.areLinesInFileSorted(inputFile));
     }
 
     @Test
     @DisplayName("lines are unsorted")
-    public void linesUnsorted() throws IOException {
-        List<String> unsortedLines = Arrays.asList("def", "abc");
+    void givenFile_thenUnsorted() throws IOException {
+        Path filePath = prepareFileWithLines(tempDir, Arrays.asList("def", "abc"));
 
-        Path filePath = tempDir.resolve("input1.txt");
-        Files.write(filePath, unsortedLines, StandardCharsets.UTF_8);
 
         Assertions.assertFalse(FileUtils.areLinesInFileSorted(filePath));
     }
 
     @Test
-    @DisplayName("recursive deletion with file")
-    public void deleteRecursiveFile() throws IOException {
-        Path filePath = tempDir.resolve("input1.txt");
-        createFileOrFail(filePath);
+    @DisplayName("delete a single file")
+    void givenFile_thenDelete() throws IOException {
+        Path filePath = prepareEmptyFile(tempDir);
+        assertThat(filePath, fileExists());
+
 
         FileUtils.deleteRecursive(filePath);
 
-        Assertions.assertFalse(filePath.toFile().exists());
+
+        assertThat(filePath, fileNotExists());
     }
 
     @Test
-    @DisplayName("recursive deletion with folder")
-    public void deleteRecursiveFolder() throws IOException {
-        Path filePath = tempDir.resolve("input");
-        mkdirsOrFail(filePath);
+    @DisplayName("delete a single folder")
+    void givenFolder_thenDelete() throws IOException {
+        Path filePath = createOutputFolder();
+        assertThat(filePath, fileExists());
+
 
         FileUtils.deleteRecursive(filePath);
 
-        Assertions.assertFalse(filePath.toFile().exists());
+
+        assertThat(filePath, fileNotExists());
     }
 
     @Test
-    @DisplayName("recursive deletion with structure")
-    public void deleteRecursiveStructure() throws IOException {
+    @DisplayName("delete a folder structure with files")
+    void givenFolderStructure_thenDelete() throws IOException {
         Path filePath = tempDir.resolve("input");
-
         Path secondFolder = tempDir.resolve("input/other/other");
         Path secondFile = tempDir.resolve("input/other/other/file.txt");
         mkdirsOrFail(secondFolder);
         createFileOrFail(secondFile);
+        assertThat(filePath, fileExists());
+
 
         FileUtils.deleteRecursive(filePath);
 
-        Assertions.assertFalse(filePath.toFile().exists());
+
+        assertThat(filePath, fileNotExists());
     }
 
     @Test
     @DisplayName("generate file with random lines")
-    public void generateFileWithRandomLines() throws IOException {
+    void givenGenerate_thenFileExists() throws IOException {
         Path filePath = tempDir.resolve("out.txt");
 
-        FileUtils.generateFileWithRandomLines(filePath, 10);
 
+        FileUtils.generateFileWithRandomLines(filePath, 10);
         List<String> lines = Files.readAllLines(filePath);
-        Assertions.assertEquals(10, lines.size());
+
+
+        assertThat(lines, hasSize(10));
     }
 
     @Test
     @DisplayName("throw exception if generate file is null")
-    public void generateFileWithRandomLinesNull() {
+    void givenGenerateWithNullFile_thenThrowException() {
         Assertions.assertThrows(NullPointerException.class,
                 () -> FileUtils.generateFileWithRandomLines(null, 10));
     }
 
     @Test
     @DisplayName("throw exception if generate with negative number")
-    public void generateFileWithRandomLinesNegative() {
-        Path filePath = tempDir.resolve("out.txt"); // NOPMD
+    void givenGenerateWithNegativeNumber_thenThrowException() {
+        Path filePath = tempDir.resolve("out.txt");
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> FileUtils.generateFileWithRandomLines(filePath, -10));
@@ -111,42 +127,51 @@ public class FileUtilsTest extends BaseTest {
             value = "DMI_HARDCODED_ABSOLUTE_FILENAME",
             justification = "OK for test")
     @Test
-    @DisplayName("regular file with extension")
-    public void regularFileExtension() {
-        Assertions.assertEquals("/some/file/file_1.txt",
-                FileUtils.getPathWithSuffixInFilename(Paths.get("/some/file/file.txt"), "_1").toString());
+    @DisplayName("add suffix in regular filename")
+    void givenRegularFile_thenAddSuffix() {
+        String original = "/some/file/file.txt";
+        String fileWithSuffix = FileUtils.getPathWithSuffixInFilename(Paths.get(original), "_1").toString();
+
+
+        assertThat("/some/file/file_1.txt", is(fileWithSuffix));
     }
 
     @SuppressFBWarnings(
             value = "DMI_HARDCODED_ABSOLUTE_FILENAME",
             justification = "OK for test")
     @Test
-    @DisplayName("file with no extension")
-    public void noExtension() {
-        Assertions.assertEquals("/some/file/file_1",
-                FileUtils.getPathWithSuffixInFilename(Paths.get("/some/file/file"), "_1").toString());
+    @DisplayName("add suffix in file without extension")
+    void givenFilewithoutExtension_thenAddSuffix() {
+        String original = "/some/file/file";
+        String fileWithSuffix = FileUtils.getPathWithSuffixInFilename(Paths.get(original), "_1").toString();
+
+
+        assertThat("/some/file/file_1", is(fileWithSuffix));
     }
 
     @SuppressFBWarnings(
             value = "DMI_HARDCODED_ABSOLUTE_FILENAME",
             justification = "OK for test")
     @Test
-    @DisplayName("file without name, only extension")
-    public void onlyFileExtension() {
-        Assertions.assertEquals("/some/file/_1.gitignore",
-                FileUtils.getPathWithSuffixInFilename(Paths.get("/some/file/.gitignore"), "_1").toString());
+    @DisplayName("add suffix if file has no name, only extension")
+    void givenFileWithNoName_thenAddSuffix() {
+        String original = "/some/file/.gitignore";
+        String fileWithSuffix = FileUtils.getPathWithSuffixInFilename(Paths.get(original), "_1").toString();
+
+
+        assertThat("/some/file/_1.gitignore", is(fileWithSuffix));
     }
 
     @Test
-    @DisplayName("wrong parameters for path with suffix")
-    public void wrongParametersPathWithSuffix() {
-        Assertions.assertThrows(NullPointerException.class, () ->
-                FileUtils.getPathWithSuffixInFilename(null, "_1"));
+    @DisplayName("throw exception if wrong parameters specified for pathWithSuffix")
+    void wrongParametersPathWithSuffix() {
+        Assertions.assertThrows(NullPointerException.class,
+                () -> FileUtils.getPathWithSuffixInFilename(null, "_1"));
 
-        Assertions.assertThrows(NullPointerException.class, () ->
-                FileUtils.getPathWithSuffixInFilename(null, null));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> FileUtils.getPathWithSuffixInFilename(null, null));
 
-        Assertions.assertThrows(NullPointerException.class, () ->
-                FileUtils.getPathWithSuffixInFilename(Paths.get("bla"), null));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> FileUtils.getPathWithSuffixInFilename(Paths.get("bla"), null));
     }
 }

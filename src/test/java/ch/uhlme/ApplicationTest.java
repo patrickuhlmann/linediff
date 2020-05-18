@@ -5,176 +5,129 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
-public class ApplicationTest extends BaseTest {
-    private static final String INPUT_FILENAME = "input.txt";
-    private static final String OUTPUT_FILENAME = "output.txt";
+import static ch.uhlme.matchers.FileContentIs.fileContentIs;
+import static ch.uhlme.preparation.PrepareFile.prepareFileWithLines;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+@SuppressWarnings({"PMD.BeanMembersShouldSerialize", "PMD.DataflowAnomalyAnalysis"})
+class ApplicationTest extends BaseTest {
     @SuppressWarnings("unused")
     @TempDir
     Path tempDir;
 
     @Test
-    @DisplayName("should throw an exception when called with null or no arguments")
-    public void noArguments() {
-        Assertions.assertThrows(IllegalArgumentException.class, () ->
-                Application.main(null)
+    @DisplayName("throw an exception when called with null or no arguments")
+    void givenNullOrNoArgument_thenThrowException() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> Application.main(null)
         );
 
-        Assertions.assertThrows(IllegalArgumentException.class, () ->
-                Application.main(new String[]{})
-        );
-    }
-
-    @Test
-    @DisplayName("should throw an exception when called with an unknown command")
-    public void unknownCommand() {
-        Assertions.assertThrows(IllegalArgumentException.class, () ->
-                Application.main(new String[]{"somecommand"})
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> Application.main(new String[]{})
         );
     }
 
     @Test
-    @DisplayName("start linediffcommand")
-    public void lineDiffCommand() throws IOException {
-        List<String> firstInputLines = Arrays.asList("a", "b", "c");
-        List<String> secondInputLines = Arrays.asList("a", "d", "f");
-
-        Path firstInput = tempDir.resolve("input1.txt");
-        Files.write(firstInput, firstInputLines, StandardCharsets.UTF_8);
-
-        Path secondInput = tempDir.resolve("input2.txt");
-        Files.write(secondInput, secondInputLines, StandardCharsets.UTF_8);
-
-        Path output = tempDir.resolve("output"); // NOPMD
-
-        Assertions.assertDoesNotThrow(
-                () -> Application.main(new String[]{"linediff", firstInput.toString(), secondInput.toString(), output.toString()}));
-
-        verifyBothFirstSecond(
-                Collections.singletonList("a"),
-                Arrays.asList("b", "c"),
-                Arrays.asList("d", "f"));
+    @DisplayName("throw an exception when called with an unknown command")
+    void givenUnknownCommand_thenThrowException() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> Application.main(new String[]{"somecommand"})
+        );
     }
 
     @Test
-    @DisplayName("start external sort")
-    public void externalSortCommand() throws IOException {
-        List<String> inputLines = Arrays.asList("d", "a", "f");
+    @DisplayName("execute the linediff command")
+    void givenLineDiff_thenExecute() throws Exception {
+        String firstInput = prepareFileWithLines(tempDir, Arrays.asList("a", "b", "c")).toString();
+        String secondInput = prepareFileWithLines(tempDir, Arrays.asList("a", "d", "f")).toString();
+        Path output = tempDir.resolve("output");
 
-        Path input = tempDir.resolve(INPUT_FILENAME);
-        Files.write(input, inputLines, StandardCharsets.UTF_8);
 
-        Path output = tempDir.resolve(OUTPUT_FILENAME);
+        Application.main(new String[]{"linediff", firstInput, secondInput, output.toString()});
 
-        Assertions.assertDoesNotThrow(() ->
-                Application.main(new String[]{"externalsort", input.toString(), output.toString()}));
 
-        verifyFile(output, Arrays.asList("a", "d", "f"));
+        assertThat(Paths.get(output.toString(), "both.txt"), fileContentIs("a"));
+        assertThat(Paths.get(output.toString(), "first_only.txt"), fileContentIs(Arrays.asList("b", "c")));
+        assertThat(Paths.get(output.toString(), "second_only.txt"), fileContentIs(Arrays.asList("d", "f")));
     }
 
     @Test
-    @DisplayName("split execution")
-    public void regularExecutionWithSplit() throws IOException {
-        List<String> inputLines = Arrays.asList("a", "b", "c");
+    @DisplayName("execute external sort command")
+    void givenExternalSort_thenExecute() throws Exception {
+        String input = prepareFileWithLines(tempDir, Arrays.asList("d", "a", "f")).toString();
+        Path output = tempDir.resolve("externalsort.txt");
 
-        Path input = tempDir.resolve(INPUT_FILENAME);
-        Files.write(input, inputLines, StandardCharsets.UTF_8);
 
-        Assertions.assertDoesNotThrow(() -> Application.main(new String[]{"split", input.toString(), "2"}));
+        Application.main(new String[]{"externalsort", input, output.toString()});
 
+
+        assertThat(output, fileContentIs(Arrays.asList("a", "d", "f")));
+    }
+
+    @Test
+    @DisplayName("execute split command")
+    void givenSplit_thenExecute() throws Exception {
+        Path input = prepareFileWithLines(tempDir, "input.txt", Arrays.asList("a", "b", "c"));
         Path output1 = tempDir.resolve("input_1.txt");
-        verifyFile(output1, Arrays.asList("a", "b"));
-
         Path output2 = tempDir.resolve("input_2.txt");
-        verifyFile(output2, Collections.singletonList("c"));
+
+
+        Application.main(new String[]{"split", input.toString(), "2"});
+
+
+        assertThat(output1, fileContentIs(Arrays.asList("a", "b")));
+        assertThat(output2, fileContentIs("c"));
     }
 
     @Test
-    @DisplayName("replace")
-    public void replaceNormal() throws Exception {
-        List<String> inputLines = Arrays.asList("test 123 test", "main 123 main");
-        List<String> outputLines = Arrays.asList("test test", "main main");
+    @DisplayName("execute replace command")
+    void givenReplace_thenExecute() throws Exception {
+        Path input = prepareFileWithLines(tempDir, Arrays.asList("test 123 test", "main 123 main"));
+        Path output = tempDir.resolve("replace.txt");
 
-        Path input = tempDir.resolve(INPUT_FILENAME);
-        Files.write(input, inputLines, StandardCharsets.UTF_8);
-        Path output = tempDir.resolve(OUTPUT_FILENAME);
 
         Application.main(new String[]{"replace", input.toString(), output.toString(), "\\s[0-9]*\\s", " "});
 
-        verifyFile(output, outputLines);
+
+        assertThat(output, fileContentIs(Arrays.asList("test test", "main main")));
     }
 
     @Test
-    @DisplayName("url decode")
-    public void urlDecode() throws Exception {
-        List<String> inputLines = Collections.singletonList("%C3%9Cber");
-        List<String> outputLines = Collections.singletonList("Über");
+    @DisplayName("execute url decode command")
+    void givenUrlDecode_thenExecute() throws Exception {
+        Path input = prepareFileWithLines(tempDir, Collections.singletonList("%C3%9Cber"));
+        Path output = tempDir.resolve("urldecode.txt");
 
-        Path input = tempDir.resolve(INPUT_FILENAME);
-        Files.write(input, inputLines, StandardCharsets.UTF_8);
-        Path output = tempDir.resolve(OUTPUT_FILENAME);
 
         Application.main(new String[]{"decodeurl", input.toString(), output.toString()});
 
-        verifyFile(output, outputLines);
+
+        assertThat(output, fileContentIs(Collections.singletonList("Über")));
     }
 
     @Test
-    @DisplayName("regular count")
-    public void countNormal() throws Exception {
-        List<String> inputLines = Arrays.asList("Test1", "abc", "Test2", "def", "Test3");
+    @DisplayName("execute count")
+    void givenCount_thenExecute() throws Exception {
+        Path input = prepareFileWithLines(tempDir, Arrays.asList("Test1", "abc", "Test2", "def", "Test3"));
 
-        Path input = tempDir.resolve(INPUT_FILENAME);
-        Files.write(input, inputLines, StandardCharsets.UTF_8);
-
-        Assertions.assertDoesNotThrow(() -> Application.main(new String[]{"countlines", input.toString(), "Test"}));
+        Application.main(new String[]{"countlines", input.toString(), "Test"});
     }
 
     @Test
-    @DisplayName("regular remove lines")
-    public void removeLinesNormal() throws Exception {
-        List<String> inputLines = Arrays.asList("line1", "test", "line2", "", "line3");
-        List<String> outputLines = Arrays.asList("line1", "line2", "", "line3");
+    @DisplayName("execute remove lines")
+    void givenRemoveLines_thenExecute() throws Exception {
+        Path input = prepareFileWithLines(tempDir, Arrays.asList("line1", "test", "line2", "", "line3"));
+        Path output = tempDir.resolve("removelines.txt");
 
-        Path input = tempDir.resolve(INPUT_FILENAME);
-        Files.write(input, inputLines, StandardCharsets.UTF_8);
-        Path output = tempDir.resolve(OUTPUT_FILENAME);
 
         Application.main(new String[]{"removelines", input.toString(), output.toString(), "test"});
 
-        verifyFile(output, outputLines);
-    }
 
-    private void verifyFile(Path file, List<String> elements) throws IOException {
-        List<String> lines = Files.readAllLines(file);
-        Assertions.assertEquals(elements.size(), lines.size());
-
-        for (int i = 0; i < elements.size(); i++) {
-            Assertions.assertEquals(elements.get(i), lines.get(i));
-        }
-    }
-
-    private void verifyBothFirstSecond(List<String> elementsBoth, List<String> elementsFirst, List<String> elementsSecond) throws IOException {
-        verifyFile("both.txt", elementsBoth);
-        verifyFile("first_only.txt", elementsFirst);
-        verifyFile("second_only.txt", elementsSecond);
-    }
-
-    private void verifyFile(String file, List<String> elements) throws IOException {
-        List<String> lines = Files.readAllLines(Paths.get(tempDir.resolve("output").toString(), file));
-        Assertions.assertEquals(elements.size(), lines.size());
-
-        for (int i = 0; i < elements.size(); i++) {
-            Assertions.assertEquals(elements.get(i), lines.get(i));
-        }
+        assertThat(output, fileContentIs(Arrays.asList("line1", "line2", "", "line3")));
     }
 }

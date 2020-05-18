@@ -9,17 +9,18 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
-public class RemoveLinesCommandTest extends BaseTest {
-    private final static String INPUT_FILENAME = "input.txt";
+import static ch.uhlme.matchers.FileContentIs.fileContentIs;
+import static ch.uhlme.preparation.PrepareFile.prepareEmptyFile;
+import static ch.uhlme.preparation.PrepareFile.prepareFileWithLines;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+@SuppressWarnings({"PMD.BeanMembersShouldSerialize", "PMD.DataflowAnomalyAnalysis"})
+class RemoveLinesCommandTest extends BaseTest {
     @SuppressWarnings("unused")
     @TempDir
     Path tempDir;
@@ -31,78 +32,63 @@ public class RemoveLinesCommandTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("should throw an exception when called without arguments")
-    public void noArguments() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> removeLinesCommand.execute(null));
+    @DisplayName("throw exception if called with the wrong number of arguments")
+    void givenWrongNumberOfArguments_thenThrowException() throws IOException {
+        Path input = prepareEmptyFile(tempDir);
+
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> removeLinesCommand.execute(null));
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> removeLinesCommand.execute(new String[]{input.toString(), "2"}));
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> removeLinesCommand.execute(new String[]{input.toString(), "2", "3", "4", "5"}));
     }
 
-    @Test
-    @DisplayName("should throw an exception when called with a wrong number of arguments")
-    public void wrongNumberOfArguments() throws IOException {
-        Path input = tempDir.resolve(INPUT_FILENAME);
-        createFileOrFail(input);
-
-        Assertions.assertThrows(IllegalArgumentException.class, () -> removeLinesCommand.execute(new String[]{input.toString(), "2"}));
-
-        Assertions.assertThrows(IllegalArgumentException.class, () -> removeLinesCommand.execute(new String[]{input.toString(), "2", "3", "4", "5"}));
-    }
-
 
     @Test
-    @DisplayName("should throw an exception if the input file does not exist")
-    public void inputFileMustExist() {
-        Path input = tempDir.resolve(INPUT_FILENAME); // NOPMD
+    @DisplayName("throw exception if the input file doesn't exist")
+    void givenNonExistingInputFile_thenThrowException() {
+        Path input = tempDir.resolve("nonexistinginput.txt");
 
         Assertions.assertThrows(FileNotFoundException.class,
                 () -> removeLinesCommand.execute(new String[]{input.toString(), "2", "3"}));
     }
 
     @Test
-    @DisplayName("should throw an exception if the output file does already exist")
-    public void outputFileMustntExist() throws IOException {
-        Path input = tempDir.resolve(INPUT_FILENAME);
-        createFileOrFail(input);
+    @DisplayName("throw exception if the output file already exists")
+    void outputFileMustntExist() throws IOException {
+        Path input = prepareEmptyFile(tempDir);
+        Path output = prepareEmptyFile(tempDir);
 
-        Path output = tempDir.resolve("output.txt");
-        createFileOrFail(output);
 
         Assertions.assertThrows(FileAlreadyExistsException.class,
                 () -> removeLinesCommand.execute(new String[]{input.toString(), output.toString(), "3"}));
     }
 
     @Test
-    @DisplayName("should throw an exception if the pattern is invalid")
-    public void patternMustBeValid() throws IOException {
-        Path input = tempDir.resolve(INPUT_FILENAME); // NOPMD
-        createFileOrFail(input);
+    @DisplayName("throw exception if the pattern is invalid")
+    void givenInvalidPattern_thenThrowException() throws IOException {
+        Path input = prepareEmptyFile(tempDir);
+        Path output = tempDir.resolve("output.txt");
 
-        Path output = tempDir.resolve("output.txt"); // NOPMD
 
         Assertions.assertThrows(PatternSyntaxException.class,
                 () -> removeLinesCommand.execute(new String[]{input.toString(), output.toString(), "[[[[["}));
     }
 
     @Test
-    @DisplayName("regular remove lines")
-    public void removeLines() throws Exception {
-        List<String> inputLines = Arrays.asList("line1", "test", "line2", "", "line3");
-        List<String> outputLines = Arrays.asList("line1", "line2", "", "line3");
-
-        Path input = tempDir.resolve(INPUT_FILENAME);
-        Files.write(input, inputLines, StandardCharsets.UTF_8);
+    @DisplayName("normal execution")
+    void normalExecution() throws Exception {
+        Path input = prepareFileWithLines(tempDir, Arrays.asList("line1", "test", "line2", "", "line3"));
         Path output = tempDir.resolve("output.txt");
+
 
         removeLinesCommand.execute(new String[]{input.toString(), output.toString(), "test"});
 
-        verifyFile(output, outputLines);
-    }
 
-    private void verifyFile(Path file, List<String> elements) throws IOException {
-        List<String> lines = Files.readAllLines(file);
-        Assertions.assertEquals(elements.size(), lines.size());
-
-        for (int i = 0; i < elements.size(); i++) {
-            Assertions.assertEquals(elements.get(i), lines.get(i));
-        }
+        assertThat(output, fileContentIs(Arrays.asList("line1", "line2", "", "line3")));
     }
 }

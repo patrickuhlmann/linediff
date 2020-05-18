@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -17,20 +15,23 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
-public class LineDiffTest extends BaseTest {
+import static ch.uhlme.matchers.FileContentIs.fileContentIs;
+import static ch.uhlme.preparation.PrepareFile.prepareEmptyFile;
+import static ch.uhlme.preparation.PrepareFile.prepareFileWithLines;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+@SuppressWarnings({"PMD.BeanMembersShouldSerialize", "PMD.DataflowAnomalyAnalysis", "PMD.AvoidDuplicateLiterals"})
+class LineDiffTest extends BaseTest {
     @SuppressWarnings("unused")
     @TempDir
     Path tempDir;
 
     @Test
     @DisplayName("exception if any input or output is null")
-    public void exceptionIfArgumentsAreNull() throws IOException {
-        Path firstInput = tempDir.resolve("input1.txt");
-        createFileOrFail(firstInput);
-        Path secondInput = tempDir.resolve("input2.txt");
-        createFileOrFail(secondInput);
-        Path output = tempDir.resolve("output");
+    void givenNullArguments_thenThrowException() throws IOException {
+        Path firstInput = prepareEmptyFile(tempDir);
+        Path secondInput = prepareEmptyFile(tempDir);
+        Path output = tempDir.resolve("outputNullArguments");
 
         Assertions.assertThrows(NullPointerException.class,
                 () -> new LineDiff(null, new InputFile(secondInput), new OutputFolder(output)));
@@ -50,8 +51,8 @@ public class LineDiffTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("empty input files lead to empty output file")
-    public void emptyInputEmptyOutput() throws IOException {
+    @DisplayName("diff with empty input files")
+    void givenEmptyInputFiles_thenDiff() throws IOException {
         runWithInputs(
                 null,
                 null);
@@ -63,8 +64,8 @@ public class LineDiffTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("ch.uhlme.diff with empty second input")
-    public void diffWithEmptySecondInput() throws IOException {
+    @DisplayName("diff with empty second inputfile")
+    void givenEmptySecondInput_thenDiff() throws IOException {
         runWithInputs(
                 Arrays.asList("a", "b"),
                 null);
@@ -76,8 +77,8 @@ public class LineDiffTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("ch.uhlme.diff with empty first input")
-    public void diffWithEmptyFirstInput() throws IOException {
+    @DisplayName("diff with empty first inputfile")
+    void givenEmptyFirstInput_thenDiff() throws IOException {
         runWithInputs(
                 null,
                 Arrays.asList("a", "b"));
@@ -89,8 +90,8 @@ public class LineDiffTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("ch.uhlme.diff both inputs middle")
-    public void diffBothInputsMiddle() throws IOException {
+    @DisplayName("diff in the middle")
+    void givenDiffMiddle_thenDiff() throws IOException {
         runWithInputs(
                 Arrays.asList("a", "b", "d"),
                 Arrays.asList("a", "c", "d"));
@@ -102,8 +103,8 @@ public class LineDiffTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("ch.uhlme.diff both inputs start/end")
-    public void diffBothInputsStartEnd() throws IOException {
+    @DisplayName("diff at start and end")
+    void givenDiffStartEnd_thenDiff() throws IOException {
         runWithInputs(
                 Arrays.asList("a", "c", "d"),
                 Arrays.asList("b", "c", "e"));
@@ -115,8 +116,8 @@ public class LineDiffTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("ch.uhlme.diff both inputs completely")
-    public void diffBothInputsCompletely() throws IOException {
+    @DisplayName("diff if completely different")
+    void givenCompleteDiff_thenDiff() throws IOException {
         runWithInputs(
                 Arrays.asList("a", "c", "e"),
                 Arrays.asList("b", "d", "f"));
@@ -128,8 +129,8 @@ public class LineDiffTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("ch.uhlme.diff first large")
-    public void diffFirstLarge() throws IOException {
+    @DisplayName("diff with first input larger")
+    void givenFirstLager_thenDiff() throws IOException {
         runWithInputs(
                 Arrays.asList("a", "b", "c", "d", "e", "f"),
                 Arrays.asList("a", "b", "f"));
@@ -141,8 +142,8 @@ public class LineDiffTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("ch.uhlme.diff second large")
-    public void diffSecondLarge() throws IOException {
+    @DisplayName("diff with second input larger")
+    void givenSecondLarger_thenDiff() throws IOException {
         runWithInputs(
                 Arrays.asList("a", "b", "f"),
                 Arrays.asList("a", "b", "c", "d", "e", "f"));
@@ -154,8 +155,8 @@ public class LineDiffTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("ch.uhlme.diff duplicates")
-    public void diffDuplicates() throws IOException {
+    @DisplayName("diff with duplicate lines")
+    void givenDuplicateLines_thenDiff() throws IOException {
         runWithInputs(
                 Arrays.asList("a", "b", "b", "b", "c"),
                 Arrays.asList("a", "b", "c", "d", "e"));
@@ -167,8 +168,8 @@ public class LineDiffTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("ch.uhlme.diff empty lines")
-    public void diffEmptyLines() throws IOException {
+    @DisplayName("diff with empty lines")
+    void givenEmptyLines_thenDiff() throws IOException {
         runWithInputs(
                 Arrays.asList("", "", "", "a", "b", "b", "b", "c"),
                 Arrays.asList("", "a", "b", "c", "d", "e"));
@@ -180,38 +181,17 @@ public class LineDiffTest extends BaseTest {
     }
 
     private void runWithInputs(List<String> firstInput, List<String> secondInput) throws IOException {
-        Path firstPath = tempDir.resolve("input1.txt");
-        createFile(firstPath, firstInput);
-
-        Path secondPath = tempDir.resolve("input2.txt");
-        createFile(secondPath, secondInput);
-
+        Path firstPath = firstInput == null ? prepareEmptyFile(tempDir) : prepareFileWithLines(tempDir, firstInput);
+        Path secondPath = secondInput == null ? prepareEmptyFile(tempDir) : prepareFileWithLines(tempDir, secondInput);
         Path output = tempDir.resolve("output");
 
         LineDiff diff = new LineDiff(new InputFile(firstPath), new InputFile(secondPath), new OutputFolder(output));
         diff.process();
     }
 
-    private void createFile(Path file, List<String> content) throws IOException {
-        if (content == null || content.size() == 0) {
-            createFileOrFail(file);
-        } else {
-            Files.write(file, content, StandardCharsets.UTF_8);
-        }
-    }
-
-    private void verifyBothFirstSecond(List<String> elementsBoth, List<String> elementsFirst, List<String> elementsSecond) throws IOException {
-        verifyFile("both.txt", elementsBoth);
-        verifyFile("first_only.txt", elementsFirst);
-        verifyFile("second_only.txt", elementsSecond);
-    }
-
-    private void verifyFile(String file, List<String> elements) throws IOException {
-        List<String> lines = Files.readAllLines(Paths.get(tempDir.resolve("output").toString(), file));
-        Assertions.assertEquals(elements.size(), lines.size());
-
-        for (int i=0; i<elements.size(); i++) {
-            Assertions.assertEquals(elements.get(i), lines.get(i));
-        }
+    private void verifyBothFirstSecond(List<String> elementsBoth, List<String> elementsFirst, List<String> elementsSecond) {
+        assertThat(Paths.get(tempDir.resolve("output").toString(), "both.txt"), fileContentIs(elementsBoth));
+        assertThat(Paths.get(tempDir.resolve("output").toString(), "first_only.txt"), fileContentIs(elementsFirst));
+        assertThat(Paths.get(tempDir.resolve("output").toString(), "second_only.txt"), fileContentIs(elementsSecond));
     }
 }
