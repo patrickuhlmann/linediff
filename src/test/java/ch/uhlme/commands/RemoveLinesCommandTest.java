@@ -34,59 +34,65 @@ class RemoveLinesCommandTest extends BaseTest {
     @Test
     @DisplayName("throw exception if called with the wrong number of arguments")
     void givenWrongNumberOfArguments_thenThrowException() throws IOException {
-        Path input = prepareEmptyFile(tempDir);
+        String input = prepareEmptyFile(tempDir).toString();
+        String[] twoArgs = new String[]{input, "2"};
+        String[] fiveArgs = new String[]{input, "2", "3", "4", "5"};
 
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> removeLinesCommand.execute(null));
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> removeLinesCommand.execute(new String[]{input.toString(), "2"}));
+                () -> removeLinesCommand.execute(twoArgs));
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> removeLinesCommand.execute(new String[]{input.toString(), "2", "3", "4", "5"}));
+                () -> removeLinesCommand.execute(fiveArgs));
     }
 
 
     @Test
     @DisplayName("throw exception if the input file doesn't exist")
     void givenNonExistingInputFile_thenThrowException() {
-        Path input = tempDir.resolve("nonexistinginput.txt");
+        String input = tempDir.resolve("nonexistinginput.txt").toString();
+        String[] args = new String[]{input, "2", "3"};
+
 
         Assertions.assertThrows(FileNotFoundException.class,
-                () -> removeLinesCommand.execute(new String[]{input.toString(), "2", "3"}));
+                () -> removeLinesCommand.execute(args));
     }
 
     @Test
     @DisplayName("throw exception if the output file already exists")
     void outputFileMustntExist() throws IOException {
-        Path input = prepareEmptyFile(tempDir);
-        Path output = prepareEmptyFile(tempDir);
+        String input = prepareEmptyFile(tempDir).toString();
+        String output = prepareEmptyFile(tempDir).toString();
+        String[] args = new String[]{input, output, "3"};
 
 
         Assertions.assertThrows(FileAlreadyExistsException.class,
-                () -> removeLinesCommand.execute(new String[]{input.toString(), output.toString(), "3"}));
+                () -> removeLinesCommand.execute(args));
     }
 
     @Test
     @DisplayName("throw exception if the pattern is invalid")
     void givenInvalidPattern_thenThrowException() throws IOException {
-        Path input = prepareEmptyFile(tempDir);
+        String input = prepareEmptyFile(tempDir).toString();
         Path output = tempDir.resolve("output.txt");
+        String[] args = new String[]{input, output.toString(), "[[[[["};
 
 
         Assertions.assertThrows(PatternSyntaxException.class,
-                () -> removeLinesCommand.execute(new String[]{input.toString(), output.toString(), "[[[[["}));
+                () -> removeLinesCommand.execute(args));
     }
 
     @Test
     @DisplayName("normal execution")
     void normalExecution() throws Exception {
-        Path input = prepareFileWithLines(tempDir, Arrays.asList("line1", "test", "line2", "", "line3"));
+        String input = prepareFileWithLines(tempDir, Arrays.asList("line1", "test", "line2", "", "line3")).toString();
         Path output = tempDir.resolve("output.txt");
+        String[] args = new String[]{input, output.toString(), "test"};
 
-
-        removeLinesCommand.execute(new String[]{input.toString(), output.toString(), "test"});
+        removeLinesCommand.execute(args);
 
 
         assertThat(output, fileContentIs(Arrays.asList("line1", "line2", "", "line3")));

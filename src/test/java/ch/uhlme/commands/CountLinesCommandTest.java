@@ -33,45 +33,51 @@ class CountLinesCommandTest extends BaseTest {
     @Test
     @DisplayName("throw an exception if called with the wrong number of arguments")
     void givenWrongNumberOfArguments_thenThrowException() throws IOException {
-        Path input = prepareEmptyFile(tempDir);
+        String input = prepareEmptyFile(tempDir).toString();
+        String[] oneArg = new String[]{input};
+        String[] threeArgs = new String[]{input, "1", "2",};
 
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> countLinesCommand.execute(null));
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> countLinesCommand.execute(new String[]{input.toString()}));
+                () -> countLinesCommand.execute(oneArg));
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> countLinesCommand.execute(new String[]{input.toString(), "1", "2",}));
+                () -> countLinesCommand.execute(threeArgs));
     }
 
     @Test
     @DisplayName("throw an exception if the input file does not exist")
     void givenNonExistingInputFile_thenThrowException() {
-        Path input = tempDir.resolve("nonexistinginput.txt");
+        String input = tempDir.resolve("nonexistinginput.txt").toString();
+        String[] args = new String[]{input, "2"};
 
 
         Assertions.assertThrows(FileNotFoundException.class,
-                () -> countLinesCommand.execute(new String[]{input.toString(), "2"}));
+                () -> countLinesCommand.execute(args));
     }
 
     @Test
     @DisplayName("throw an exception if an invalid pattern is used")
     void givenInvalidPattern_thenThrowException() throws IOException {
-        Path input = prepareEmptyFile(tempDir);
+        String input = prepareEmptyFile(tempDir).toString();
+        String[] args = new String[]{input, "[[[[["};
+
 
         Assertions.assertThrows(PatternSyntaxException.class,
-                () -> countLinesCommand.execute(new String[]{input.toString(), "[[[[["}));
+                () -> countLinesCommand.execute(args));
     }
 
     @Test
     @DisplayName("normal execution")
     void normalExecution() throws Exception {
         Path input = prepareFileWithLines(tempDir, Arrays.asList("Test1", "abc", "Test2", "def", "Test3"));
+        String[] args = new String[]{input.toString(), "Test"};
 
 
-        countLinesCommand.execute(new String[]{input.toString(), "Test"});
+        countLinesCommand.execute(args);
 
 
         assertThat(countLinesCommand.getCounter(), is(3));

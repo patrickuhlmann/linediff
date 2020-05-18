@@ -177,7 +177,8 @@ class FileUtilsTest extends BaseTest {
         Assertions.assertThrows(NullPointerException.class,
                 () -> FileUtils.getPathWithSuffixInFilename(null, null));
 
+        Path bla = Paths.get("bla");
         Assertions.assertThrows(NullPointerException.class,
-                () -> FileUtils.getPathWithSuffixInFilename(Paths.get("bla"), null));
+                () -> FileUtils.getPathWithSuffixInFilename(bla, null));
     }
 }

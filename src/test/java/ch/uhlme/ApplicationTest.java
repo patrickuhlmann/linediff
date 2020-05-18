@@ -129,7 +129,9 @@ class ApplicationTest extends BaseTest {
     void givenCount_thenExecute() throws Exception {
         Path input = prepareFileWithLines(tempDir, Arrays.asList("Test1", "abc", "Test2", "def", "Test3"));
 
-        Application.main(new String[]{"countlines", input.toString(), "Test"});
+        Assertions.assertDoesNotThrow(
+                () -> Application.main(new String[]{"countlines", input.toString(), "Test"})
+        );
     }
 
     @Test

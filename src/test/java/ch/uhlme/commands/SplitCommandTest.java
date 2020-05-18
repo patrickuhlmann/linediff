@@ -35,14 +35,17 @@ class SplitCommandTest extends BaseTest {
     @Test
     @DisplayName("throw exception if called with the wrong number of arguments")
     void givenWrongNumberOfArguments_thenThrowException() {
+        String[] oneArg = new String[]{"1"};
+        String[] threeArgs = new String[]{"1", "2", "3"};
+
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> splitCommand.execute(null));
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> splitCommand.execute(new String[]{"1"}));
+                () -> splitCommand.execute(oneArg));
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> splitCommand.execute(new String[]{"1", "2", "3"}));
+                () -> splitCommand.execute(threeArgs));
     }
 
     @Test
@@ -55,17 +58,20 @@ class SplitCommandTest extends BaseTest {
     @Test
     @DisplayName("throw exception if line is not a positive integer")
     void givenLineNotPositiveInteger_thenThrowException() throws IOException {
-        Path input = prepareEmptyFile(tempDir);
+        String input = prepareEmptyFile(tempDir).toString();
+        String[] argWithString = new String[]{input, "some"};
+        String[] argWithMinus = new String[]{input, "-20"};
+        String[] argZero = new String[]{input, "0"};
 
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> splitCommand.execute(new String[]{input.toString(), "some"}));
+                () -> splitCommand.execute(argWithString));
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> splitCommand.execute(new String[]{input.toString(), "-20"}));
+                () -> splitCommand.execute(argWithMinus));
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> splitCommand.execute(new String[]{input.toString(), "0"}));
+                () -> splitCommand.execute(argZero));
     }
 
     @Test
@@ -75,13 +81,15 @@ class SplitCommandTest extends BaseTest {
         prepareEmptyFile(tempDir, "outputnotexist_1.txt");
         Path inputLater = prepareFileWithLines(tempDir, "outputlater.txt", Arrays.asList("a", "b", "c", "d", "e"));
         prepareEmptyFile(tempDir, "outputlater_3.txt");
+        String[] argFirst = new String[]{input.toString(), "20"};
+        String[] argLater = new String[]{inputLater.toString(), "2"};
 
 
         Assertions.assertThrows(FileAlreadyExistsException.class,
-                () -> splitCommand.execute(new String[]{input.toString(), "20"}));
+                () -> splitCommand.execute(argFirst));
 
         Assertions.assertThrows(FileAlreadyExistsException.class,
-                () -> splitCommand.execute(new String[]{inputLater.toString(), "2"}));
+                () -> splitCommand.execute(argLater));
     }
 
     @Test
@@ -90,9 +98,10 @@ class SplitCommandTest extends BaseTest {
         Path input = prepareFileWithLines(tempDir, "lesslines.txt", Arrays.asList("d", "a", "f"));
         Path output = tempDir.resolve("lesslines_1.txt");
         Path output2 = tempDir.resolve("lesslines_2.txt");
+        String[] args = new String[]{input.toString(), "5"};
 
 
-        splitCommand.execute(new String[]{input.toString(), "5"});
+        splitCommand.execute(args);
 
 
         assertThat(output, fileContentIs(Arrays.asList("d", "a", "f")));
@@ -107,9 +116,10 @@ class SplitCommandTest extends BaseTest {
         Path output2 = tempDir.resolve("regular_2.txt");
         Path output3 = tempDir.resolve("regular_3.txt");
         Path output4 = tempDir.resolve("regular_4.txt");
+        String[] args = new String[]{input.toString(), "2"};
 
 
-        splitCommand.execute(new String[]{input.toString(), "2"});
+        splitCommand.execute(args);
 
 
         assertThat(output1, fileContentIs(Arrays.asList("a", "b")));

@@ -34,24 +34,27 @@ class OutputFolderTest extends BaseTest {
         Path output = tempDir.resolve("output/both.txt");
         mkdirsOrFail(outputFolder);
         createFileOrFail(output);
+        String[] args = new String[]{"linediff", firstInput, secondInput, outputFolder.toString()};
 
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> Application.main(new String[]{"linediff", firstInput, secondInput, outputFolder.toString()}));
+                () -> Application.main(args));
         deleteFileOrFail(output);
 
         output = tempDir.resolve("output/first_only.txt");
         createFileOrFail(output);
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> Application.main(new String[]{firstInput, secondInput, outputFolder.toString()}));
+                () -> Application.main(args)
+        );
         deleteFileOrFail(output);
 
         output = tempDir.resolve("output/second_only.txt");
         createFileOrFail(output);
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> Application.main(new String[]{firstInput, secondInput, outputFolder.toString()}));
+                () -> Application.main(args)
+        );
     }
 
     @Test

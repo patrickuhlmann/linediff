@@ -33,48 +33,53 @@ class ReplaceCommandTest extends BaseTest {
     @Test
     @DisplayName("throw exception if called with the wrong number of arguments")
     void givenWrongNumberOfArguments_thenThrowExeption() throws IOException {
-        Path input = prepareEmptyFile(tempDir);
+        String input = prepareEmptyFile(tempDir).toString();
+        String[] threeArgs = new String[]{input, "2", "3"};
+        String[] fiveArgs = new String[]{input, "2", "3", "4", "5"};
 
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> replaceCommand.execute(null));
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> replaceCommand.execute(new String[]{input.toString(), "2", "3"}));
+                () -> replaceCommand.execute(threeArgs));
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> replaceCommand.execute(new String[]{input.toString(), "2", "3", "4", "5"}));
+                () -> replaceCommand.execute(fiveArgs));
     }
 
 
     @Test
     @DisplayName("throw exception if the input file doesn't exist")
     void givenInputFileNonExisting_thenThrowException() {
-        Path input = tempDir.resolve("inputnonexisting.txt");
+        String input = tempDir.resolve("inputnonexisting.txt").toString();
+        String[] args = new String[]{input, "2", "3", "4"};
+
 
         Assertions.assertThrows(FileNotFoundException.class,
-                () -> replaceCommand.execute(new String[]{input.toString(), "2", "3", "4"}));
+                () -> replaceCommand.execute(args));
     }
 
     @Test
     @DisplayName("throw exception if the output file already exists")
     void outputFileMustntExist() throws IOException {
-        Path input = prepareEmptyFile(tempDir);
-        Path output = prepareEmptyFile(tempDir);
+        String input = prepareEmptyFile(tempDir).toString();
+        String output = prepareEmptyFile(tempDir).toString();
+        String[] args = new String[]{input, output, "3", "4"};
 
 
         Assertions.assertThrows(FileAlreadyExistsException.class,
-                () -> replaceCommand.execute(new String[]{input.toString(), output.toString(), "3", "4"}));
+                () -> replaceCommand.execute(args));
     }
 
     @Test
     @DisplayName("regular execution")
     void regularExecution() throws Exception {
-        Path input = prepareFileWithLines(tempDir, Arrays.asList("test 123 test", "main 123 main"));
+        String input = prepareFileWithLines(tempDir, Arrays.asList("test 123 test", "main 123 main")).toString();
         Path output = tempDir.resolve("output.txt");
+        String[] args = new String[]{input, output.toString(), "\\s[0-9]*\\s", " "};
 
-
-        replaceCommand.execute(new String[]{input.toString(), output.toString(), "\\s[0-9]*\\s", " "});
+        replaceCommand.execute(args);
 
 
         assertThat(output, fileContentIs(Arrays.asList("test test", "main main")));

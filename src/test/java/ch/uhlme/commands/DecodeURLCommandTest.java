@@ -33,39 +33,43 @@ class DecodeURLCommandTest extends BaseTest {
     @Test
     @DisplayName("throw an exception if called with the wrong number of arguments")
     void givenWrongNumberOfArguments_thenThrowException() throws IOException {
-        Path input = prepareEmptyFile(tempDir);
+        String input = prepareEmptyFile(tempDir).toString();
+        String[] oneArg = new String[]{input};
+        String[] threeArgs = new String[]{input, "1", "2"};
 
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> decodeURLCommand.execute(null));
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> decodeURLCommand.execute(new String[]{input.toString()}));
+                () -> decodeURLCommand.execute(oneArg));
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> decodeURLCommand.execute(new String[]{input.toString(), "1", "2"}));
+                () -> decodeURLCommand.execute(threeArgs));
     }
 
 
     @Test
     @DisplayName("throw an exception if the input file doesn't exist")
     void givenNonExistingInputFile_thenThrowException() {
-        Path input = tempDir.resolve("nonexistinginput.txt");
+        String input = tempDir.resolve("nonexistinginput.txt").toString();
+        String[] args = new String[]{input, "2"};
 
 
         Assertions.assertThrows(FileNotFoundException.class,
-                () -> decodeURLCommand.execute(new String[]{input.toString(), "2"}));
+                () -> decodeURLCommand.execute(args));
     }
 
     @Test
     @DisplayName("throw exception if the output file already exists")
     void givenExistingOutputFile_thenThrowException() throws IOException {
-        Path input = prepareEmptyFile(tempDir);
-        Path output = prepareEmptyFile(tempDir);
+        String input = prepareEmptyFile(tempDir).toString();
+        String output = prepareEmptyFile(tempDir).toString();
+        String[] args = new String[]{input, output};
 
 
         Assertions.assertThrows(FileAlreadyExistsException.class,
-                () -> decodeURLCommand.execute(new String[]{input.toString(), output.toString()}));
+                () -> decodeURLCommand.execute(args));
     }
 
     @Test
@@ -73,9 +77,10 @@ class DecodeURLCommandTest extends BaseTest {
     void normalExecution() throws Exception {
         Path input = prepareFileWithLines(tempDir, List.of("%C3%9Cber", "Another"));
         Path output = tempDir.resolve("output.txt");
+        String[] args = new String[]{input.toString(), output.toString()};
 
 
-        decodeURLCommand.execute(new String[]{input.toString(), output.toString()});
+        decodeURLCommand.execute(args);
 
 
         assertThat(output, FileContentIs.fileContentIs(List.of("Über", "Another")));
