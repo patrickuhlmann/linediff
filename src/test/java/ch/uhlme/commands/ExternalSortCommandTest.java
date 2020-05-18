@@ -32,42 +32,51 @@ class ExternalSortCommandTest extends BaseTest {
     @Test
     @DisplayName("throw an exception if called with the wrong number of arguments")
     void givenWrongNumberOfArguments_thenThrowException() {
+        String[] oneArg = new String[]{"1"};
+        String[] threeArgs = new String[]{"1", "2", "3"};
+
+
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> sortCommand.execute(null));
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> sortCommand.execute(new String[]{"1"}));
+                () -> sortCommand.execute(oneArg));
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> sortCommand.execute(new String[]{"1", "2", "3"}));
+                () -> sortCommand.execute(threeArgs));
     }
 
     @Test
     @DisplayName("throw an exception if the input file doesn't exist")
     void givenNonExistingInputFile_thenThrowException() {
+        String[] args = new String[]{"input.txt", "output.txt"};
+
+
         Assertions.assertThrows(FileNotFoundException.class,
-                () -> sortCommand.execute(new String[]{"input.txt", "output.txt"}));
+                () -> sortCommand.execute(args));
     }
 
     @Test
     @DisplayName("throw an exception if the output file already exists")
     void givenExistingOutputFile_thenThrowException() throws IOException {
-        Path input = prepareEmptyFile(tempDir);
-        Path output = prepareEmptyFile(tempDir);
+        String input = prepareEmptyFile(tempDir).toString();
+        String output = prepareEmptyFile(tempDir).toString();
+        String[] args = new String[]{input, output};
 
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> sortCommand.execute(new String[]{input.toString(), output.toString()}));
+                () -> sortCommand.execute(args));
     }
 
     @Test
     @DisplayName("normal execution")
     void normalExecution() throws IOException {
-        Path input = prepareFileWithLines(tempDir, Arrays.asList("d", "a", "f"));
+        String input = prepareFileWithLines(tempDir, Arrays.asList("d", "a", "f")).toString();
         Path output = tempDir.resolve("output.txt");
+        String[] args = new String[]{input, output.toString()};
 
 
-        sortCommand.execute(new String[]{input.toString(), output.toString()});
+        sortCommand.execute(args);
 
 
         assertThat(output, fileContentIs(Arrays.asList("a", "d", "f")));

@@ -26,27 +26,33 @@ class LineDiffTest extends BaseTest {
     @TempDir
     Path tempDir;
 
+    @SuppressWarnings({"PMD.CloseResource"})
     @Test
     @DisplayName("exception if any input or output is null")
     void givenNullArguments_thenThrowException() throws IOException {
-        Path firstInput = prepareEmptyFile(tempDir);
-        Path secondInput = prepareEmptyFile(tempDir);
-        Path output = tempDir.resolve("outputNullArguments");
+        Path firstInputPath = prepareEmptyFile(tempDir);
+        Path secondInputPath = prepareEmptyFile(tempDir);
+        Path outputPath = tempDir.resolve("outputNullArguments");
+        InputFile firstInput = new InputFile(firstInputPath);
+        InputFile secondInput = new InputFile(secondInputPath);
+        OutputFolder output1 = new OutputFolder(outputPath);
+
 
         Assertions.assertThrows(NullPointerException.class,
-                () -> new LineDiff(null, new InputFile(secondInput), new OutputFolder(output)));
-        FileUtils.deleteRecursive(output);
+                () -> new LineDiff(null, secondInput, output1));
+        FileUtils.deleteRecursive(outputPath);
 
-
+        OutputFolder output2 = new OutputFolder(outputPath);
         Assertions.assertThrows(NullPointerException.class,
-                () -> new LineDiff(new InputFile(firstInput), null, new OutputFolder(output)));
-        FileUtils.deleteRecursive(output);
+                () -> new LineDiff(firstInput, null, output2));
+        FileUtils.deleteRecursive(outputPath);
 
+        OutputFolder output3 = new OutputFolder(outputPath);
         Assertions.assertThrows(NullPointerException.class,
-                () -> new LineDiff(new InputFile(firstInput), new InputFile(secondInput), null));
+                () -> new LineDiff(firstInput, secondInput, null));
 
         Assertions.assertDoesNotThrow(() -> {
-            new LineDiff(new InputFile(firstInput), new InputFile(secondInput), new OutputFolder(output));
+            new LineDiff(firstInput, secondInput, output3);
         });
     }
 
