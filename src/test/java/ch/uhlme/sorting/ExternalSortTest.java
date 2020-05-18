@@ -8,13 +8,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 
 import static ch.uhlme.matchers.FileContentIs.fileContentIs;
 import static ch.uhlme.preparation.PrepareFile.prepareFileWithLines;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 @SuppressWarnings({"PMD.BeanMembersShouldSerialize", "PMD.DataflowAnomalyAnalysis"})
 class ExternalSortTest extends BaseTest {
@@ -86,7 +89,10 @@ class ExternalSortTest extends BaseTest {
         Path output = tempDir.resolve("output.txt");
         ExternalSort ext = new ExternalSort(700);
 
-
+        List<String> lines = Files.readAllLines(input);
+        assertThat(lines.size(), is(100));
         Assertions.assertDoesNotThrow(() -> ext.sort(input, output));
+        lines = Files.readAllLines(output);
+        assertThat(lines.size(), is(100));
     }
 }

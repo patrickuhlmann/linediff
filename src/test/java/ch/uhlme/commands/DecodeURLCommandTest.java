@@ -12,7 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Path;
-import java.util.Collections;
+import java.util.List;
 
 import static ch.uhlme.preparation.PrepareFile.prepareEmptyFile;
 import static ch.uhlme.preparation.PrepareFile.prepareFileWithLines;
@@ -71,13 +71,13 @@ class DecodeURLCommandTest extends BaseTest {
     @Test
     @DisplayName("normal execution")
     void normalExecution() throws Exception {
-        Path input = prepareFileWithLines(tempDir, Collections.singletonList("%C3%9Cber"));
+        Path input = prepareFileWithLines(tempDir, List.of("%C3%9Cber", "Another"));
         Path output = tempDir.resolve("output.txt");
 
 
         decodeURLCommand.execute(new String[]{input.toString(), output.toString()});
 
 
-        assertThat(output, FileContentIs.fileContentIs("Über"));
+        assertThat(output, FileContentIs.fileContentIs(List.of("Über", "Another")));
     }
 }

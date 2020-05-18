@@ -6,6 +6,7 @@ plugins {
     id "org.sonarqube" version "2.8"
     id "com.github.spotbugs" version "4.0.8"
     id 'pmd'
+    id 'info.solidsoft.pitest' version '1.5.1'
 }
 
 group 'ch.uhlme'
@@ -25,8 +26,8 @@ dependencies {
 }
 
 compileJava   {
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 test {
@@ -48,11 +49,24 @@ jar {
 
 /* jacoco configuration */
 check.dependsOn jacocoTestReport
+check.dependsOn jacocoTestCoverageVerification
 jacocoTestReport.mustRunAfter test
 
 jacocoTestReport {
     reports {
         xml.enabled true
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.8
+            }
+        }
     }
 }
 
@@ -86,4 +100,15 @@ spotbugsTest {
             enabled = true
         }
     } as Closure<NamedDomainObjectContainer<? extends SpotBugsReport>>))
+}
+
+pitest {
+    //adds dependency to org.pitest:pitest-junit5-plugin and sets "testPlugin" to "junit5"
+    junit5PluginVersion = '0.12'
+    avoidCallsTo = [ 'com.google.common.flogger',
+                     'java.io.PrintStream',
+                     'java.io.BufferedReader',
+                     'java.io.InputStream',
+                     'java.util.logging',
+                     'ch.uhlme.utils.LogUtils']
 }

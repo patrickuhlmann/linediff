@@ -53,6 +53,9 @@ public class ExternalSort {
                     currentSize += currentLine.length() * 2 + 40; // java uses 16 bits per character + 40 bytes of overhead (estimated)
                     currentLine = fbr.readLine();
                 }
+                if (currentLine != null) {
+                    lines.add(currentLine);
+                }
                 if (!lines.isEmpty()) {
                     splitedFiles.add(sortAndSave(lines));
                 }
@@ -64,8 +67,10 @@ public class ExternalSort {
     }
 
     private Path sortAndSave(List<String> lines) throws IOException {
+        logger.atFinest().log("%d lines to sort and save", lines.size());
         lines.sort(String::compareTo);
         File file = File.createTempFile("linediff_", "_flatfile");
+        logger.atFine().log("Tempfile created %s", file);
         file.deleteOnExit();
 
         Files.write(file.toPath(), lines, StandardCharsets.UTF_8);

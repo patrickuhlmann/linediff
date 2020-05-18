@@ -45,7 +45,7 @@ class FileUtilsTest extends BaseTest {
     @Test
     @DisplayName("lines are unsorted")
     void givenFile_thenUnsorted() throws IOException {
-        Path filePath = prepareFileWithLines(tempDir, Arrays.asList("def", "abc"));
+        Path filePath = prepareFileWithLines(tempDir, Arrays.asList("def", "dee"));
 
 
         Assertions.assertFalse(FileUtils.areLinesInFileSorted(filePath));
@@ -99,12 +99,15 @@ class FileUtilsTest extends BaseTest {
     void givenGenerate_thenFileExists() throws IOException {
         Path filePath = tempDir.resolve("out.txt");
 
-
         FileUtils.generateFileWithRandomLines(filePath, 10);
         List<String> lines = Files.readAllLines(filePath);
+        FileUtils.generateFileWithRandomLines(filePath, 1);
+        List<String> lines2 = Files.readAllLines(filePath);
 
 
         assertThat(lines, hasSize(10));
+        assertThat(lines2, hasSize(1));
+        assertThat(lines2.get(0).length(), is(100));
     }
 
     @Test
@@ -121,6 +124,9 @@ class FileUtilsTest extends BaseTest {
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> FileUtils.generateFileWithRandomLines(filePath, -10));
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> FileUtils.generateFileWithRandomLines(filePath, -1));
     }
 
     @SuppressFBWarnings(
