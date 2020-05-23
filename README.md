@@ -1,5 +1,6 @@
-﻿License:
+License:
 ![GitHub](https://img.shields.io/github/license/patrickuhlmann/linedifference)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fpatrickuhlmann%2Flinedifference.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fpatrickuhlmann%2Flinedifference?ref=badge_shield)
 
 Build: [![Build Status](https://travis-ci.com/patrickuhlmann/linedifference.svg?branch=master)](https://travis-ci.com/patrickuhlmann/linedifference)
 
@@ -67,3 +68,5 @@ Executes mutation testing, note that the findings are not necessarily bugs
 ## License
 
 The code is available under the terms of the MIT License
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fpatrickuhlmann%2Flinedifference.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fpatrickuhlmann%2Flinedifference?ref=badge_large)
