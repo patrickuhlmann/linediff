@@ -66,11 +66,11 @@ It uses JDK 11
  * `./gradlew jar` <br>
 Creates a jar that can be executed. It also creates a source and a javadoc jar.
 
- * `./gradlew javadoc` <br>
-Creates the javadoc for the project
+ * `./gradlew javadoc jxr` <br>
+Creates the javadoc and jxr report for the project
 
  * `./gradlew check` <br>
-Executes the unit tests and generates various reports (unit test, coverage, pmd)
+Executes the unit tests and generates various reports (checkstyle, jacoco, pmd, spotbugs, tests)
 
  * `./gradlew pitest` <br>
 Executes mutation testing, note that the findings are not necessarily bugs
