@@ -1,20 +1,19 @@
 package ch.uhlme;
 
-import ch.uhlme.commands.CountLinesCommand;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-
 import static ch.uhlme.matchers.FileContentIs.fileContentIs;
 import static ch.uhlme.preparation.PrepareFile.prepareFileWithLines;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.StringContains.containsString;
+
+import ch.uhlme.commands.CountLinesCommand;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 @SuppressWarnings({"PMD.BeanMembersShouldSerialize", "PMD.DataflowAnomalyAnalysis"})
 class ApplicationTest extends BaseTest {
@@ -28,19 +27,19 @@ class ApplicationTest extends BaseTest {
     CountLinesCommand clc = new CountLinesCommand();
 
     Exception e =
-            Assertions.assertThrows(IllegalArgumentException.class, () -> Application.main(null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Application.main(null));
     assertThat(e.getMessage(), containsString(clc.getName()));
 
     Assertions.assertThrows(
-            IllegalArgumentException.class, () -> Application.main(new String[]{}));
+        IllegalArgumentException.class, () -> Application.main(new String[] {}));
   }
 
   @Test
   @DisplayName("throw an exception when called with null or no arguments")
   void givenUnknownCommand_thenExecute() {
     Exception e =
-            Assertions.assertThrows(
-                    IllegalArgumentException.class, () -> Application.main(new String[]{"mycommand"}));
+        Assertions.assertThrows(
+            IllegalArgumentException.class, () -> Application.main(new String[] {"mycommand"}));
     assertThat(e.getMessage(), containsString("not found"));
   }
 
@@ -48,7 +47,7 @@ class ApplicationTest extends BaseTest {
   @DisplayName("throw an exception when called with an unknown command")
   void givenUnknownCommand_thenThrowException() {
     Assertions.assertThrows(
-            IllegalArgumentException.class, () -> Application.main(new String[]{"somecommand"}));
+        IllegalArgumentException.class, () -> Application.main(new String[] {"somecommand"}));
   }
 
   @Test
@@ -58,13 +57,13 @@ class ApplicationTest extends BaseTest {
     String secondInput = prepareFileWithLines(tempDir, Arrays.asList("a", "d", "f")).toString();
     Path output = tempDir.resolve("output");
 
-    Application.main(new String[]{"linediff", firstInput, secondInput, output.toString()});
+    Application.main(new String[] {"linediff", firstInput, secondInput, output.toString()});
 
     assertThat(Paths.get(output.toString(), "both.txt"), fileContentIs("a"));
     assertThat(
-            Paths.get(output.toString(), "first_only.txt"), fileContentIs(Arrays.asList("b", "c")));
+        Paths.get(output.toString(), "first_only.txt"), fileContentIs(Arrays.asList("b", "c")));
     assertThat(
-            Paths.get(output.toString(), "second_only.txt"), fileContentIs(Arrays.asList("d", "f")));
+        Paths.get(output.toString(), "second_only.txt"), fileContentIs(Arrays.asList("d", "f")));
   }
 
   @Test
@@ -73,7 +72,7 @@ class ApplicationTest extends BaseTest {
     String input = prepareFileWithLines(tempDir, Arrays.asList("d", "a", "f")).toString();
     Path output = tempDir.resolve("externalsort.txt");
 
-    Application.main(new String[]{"externalsort", input, output.toString()});
+    Application.main(new String[] {"externalsort", input, output.toString()});
 
     assertThat(output, fileContentIs(Arrays.asList("a", "d", "f")));
   }
@@ -85,7 +84,7 @@ class ApplicationTest extends BaseTest {
     Path output1 = tempDir.resolve("input_1.txt");
     Path output2 = tempDir.resolve("input_2.txt");
 
-    Application.main(new String[]{"split", input.toString(), "2"});
+    Application.main(new String[] {"split", input.toString(), "2"});
 
     assertThat(output1, fileContentIs(Arrays.asList("a", "b")));
     assertThat(output2, fileContentIs("c"));
@@ -98,7 +97,7 @@ class ApplicationTest extends BaseTest {
     Path output = tempDir.resolve("replace.txt");
 
     Application.main(
-            new String[]{"replace", input.toString(), output.toString(), "\\s[0-9]*\\s", " "});
+        new String[] {"replace", input.toString(), output.toString(), "\\s[0-9]*\\s", " "});
 
     assertThat(output, fileContentIs(Arrays.asList("test test", "main main")));
   }
@@ -109,7 +108,7 @@ class ApplicationTest extends BaseTest {
     Path input = prepareFileWithLines(tempDir, Collections.singletonList("%C3%9Cber"));
     Path output = tempDir.resolve("urldecode.txt");
 
-    Application.main(new String[]{"decodeurl", input.toString(), output.toString()});
+    Application.main(new String[] {"decodeurl", input.toString(), output.toString()});
 
     assertThat(output, fileContentIs(Collections.singletonList("Über")));
   }
@@ -118,20 +117,20 @@ class ApplicationTest extends BaseTest {
   @DisplayName("execute count")
   void givenCount_thenExecute() throws Exception {
     Path input =
-            prepareFileWithLines(tempDir, Arrays.asList("Test1", "abc", "Test2", "def", "Test3"));
+        prepareFileWithLines(tempDir, Arrays.asList("Test1", "abc", "Test2", "def", "Test3"));
 
     Assertions.assertDoesNotThrow(
-            () -> Application.main(new String[]{"countlines", input.toString(), "Test"}));
+        () -> Application.main(new String[] {"countlines", input.toString(), "Test"}));
   }
 
   @Test
   @DisplayName("execute remove lines")
   void givenRemoveLines_thenExecute() throws Exception {
     Path input =
-            prepareFileWithLines(tempDir, Arrays.asList("line1", "test", "line2", "", "line3"));
+        prepareFileWithLines(tempDir, Arrays.asList("line1", "test", "line2", "", "line3"));
     Path output = tempDir.resolve("removelines.txt");
 
-    Application.main(new String[]{"removelines", input.toString(), output.toString(), "test"});
+    Application.main(new String[] {"removelines", input.toString(), output.toString(), "test"});
 
     assertThat(output, fileContentIs(Arrays.asList("line1", "line2", "", "line3")));
   }

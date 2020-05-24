@@ -1,9 +1,7 @@
-package ch.uhlme.sorting; // based on Public Domain Code from
-// https://www.ashishsharma.me/2011/08/external-merge-sort.html
+package ch.uhlme.sorting;
 
 import ch.uhlme.utils.ByteCount;
 import com.google.common.flogger.FluentLogger;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,21 +9,37 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.PriorityQueue;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * based on Public Domain Code from // https://www.ashishsharma.me/2011/08/external-merge-sort.html
+ */
 @SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ExternalSort {
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
   private long splitSize = 20L * 1024L * 1024L;
 
-  public ExternalSort() {
-  }
+  public ExternalSort() {}
 
   public ExternalSort(long splitSize) {
     this.splitSize = splitSize;
   }
 
+  /**
+   * Executes the sorting by line using the default java comparator. The used algorithm is External
+   * Merge sort. Thus it will split the input file into 20 MB large temporary files. These will be
+   * sorted and then merged in the end again.
+   *
+   * @param input file to sort
+   * @param output sorted outputfile
+   * @throws IOException if the input file cannot be read, any of the temporary files cannot be read
+   *     or written too as well as the output file cannot be written.
+   */
   public void sort(Path input, Path output) throws IOException {
     Objects.requireNonNull(input);
     Objects.requireNonNull(output);
@@ -45,14 +59,14 @@ public class ExternalSort {
       String currentLine = "";
       while (currentLine != null) {
         logger.atFine().atMostEvery(10, TimeUnit.SECONDS).log(
-                "free memory: %s", new ByteCount(Runtime.getRuntime().freeMemory()));
+            "free memory: %s", new ByteCount(Runtime.getRuntime().freeMemory()));
         long currentSize = 0;
         currentLine = fbr.readLine();
         while ((currentSize < splitSize) && (currentLine != null)) {
           lines.add(currentLine);
           currentSize +=
-                  currentLine.length() * 2
-                          + 40; // java uses 16 bits per character + 40 bytes of overhead (estimated)
+              currentLine.length() * 2
+                  + 40; // java uses 16 bits per character + 40 bytes of overhead (estimated)
           currentLine = fbr.readLine();
         }
         if (currentLine != null) {
@@ -84,7 +98,7 @@ public class ExternalSort {
     logger.atFine().log("merge %d files", files.size());
 
     PriorityQueue<BinaryFileBuffer> pq =
-            new PriorityQueue<>(files.size(), Comparator.comparing(BinaryFileBuffer::peek));
+        new PriorityQueue<>(files.size(), Comparator.comparing(BinaryFileBuffer::peek));
 
     for (Path f : files) {
       logger.atFinest().log("create reader for file %s", f);
@@ -108,7 +122,9 @@ public class ExternalSort {
         }
       }
     } finally {
-      for (BinaryFileBuffer bfb : pq) bfb.close();
+      for (BinaryFileBuffer bfb : pq) {
+        bfb.close();
+      }
     }
   }
 
@@ -138,8 +154,7 @@ public class ExternalSort {
     }
 
     public String peek() {
-      if (isEmpty()) return null;
-      return cache;
+      return isEmpty() ? null : cache;
     }
 
     public String pop() throws IOException {

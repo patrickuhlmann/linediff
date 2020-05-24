@@ -1,19 +1,5 @@
 package ch.uhlme.utils;
 
-import ch.uhlme.BaseTest;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-
 import static ch.uhlme.matchers.FileExists.fileExists;
 import static ch.uhlme.matchers.FileNotExists.fileNotExists;
 import static ch.uhlme.preparation.PrepareFile.prepareEmptyFile;
@@ -21,6 +7,19 @@ import static ch.uhlme.preparation.PrepareFile.prepareFileWithLines;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
+
+import ch.uhlme.BaseTest;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 @SuppressWarnings({"PMD.BeanMembersShouldSerialize", "PMD.DataflowAnomalyAnalysis"})
 class FileUtilsTest extends BaseTest {
@@ -105,7 +104,7 @@ class FileUtilsTest extends BaseTest {
   @DisplayName("throw exception if generate file is null")
   void givenGenerateWithNullFile_thenThrowException() {
     Assertions.assertThrows(
-            NullPointerException.class, () -> FileUtils.generateFileWithRandomLines(null, 10));
+        NullPointerException.class, () -> FileUtils.generateFileWithRandomLines(null, 10));
   }
 
   @Test
@@ -114,10 +113,10 @@ class FileUtilsTest extends BaseTest {
     Path filePath = tempDir.resolve("out.txt");
 
     Assertions.assertThrows(
-            IllegalArgumentException.class, () -> FileUtils.generateFileWithRandomLines(filePath, -10));
+        IllegalArgumentException.class, () -> FileUtils.generateFileWithRandomLines(filePath, -10));
 
     Assertions.assertThrows(
-            IllegalArgumentException.class, () -> FileUtils.generateFileWithRandomLines(filePath, -1));
+        IllegalArgumentException.class, () -> FileUtils.generateFileWithRandomLines(filePath, -1));
   }
 
   @SuppressFBWarnings(value = "DMI_HARDCODED_ABSOLUTE_FILENAME", justification = "OK for test")
@@ -126,7 +125,7 @@ class FileUtilsTest extends BaseTest {
   void givenRegularFile_thenAddSuffix() {
     String original = "/some/file/file.txt";
     String fileWithSuffix =
-            FileUtils.getPathWithSuffixInFilename(Paths.get(original), "_1").toString();
+        FileUtils.getPathWithSuffixInFilename(Paths.get(original), "_1").toString();
 
     assertThat("/some/file/file_1.txt", is(fileWithSuffix));
   }
@@ -137,7 +136,7 @@ class FileUtilsTest extends BaseTest {
   void givenFilewithoutExtension_thenAddSuffix() {
     String original = "/some/file/file";
     String fileWithSuffix =
-            FileUtils.getPathWithSuffixInFilename(Paths.get(original), "_1").toString();
+        FileUtils.getPathWithSuffixInFilename(Paths.get(original), "_1").toString();
 
     assertThat("/some/file/file_1", is(fileWithSuffix));
   }
@@ -148,7 +147,7 @@ class FileUtilsTest extends BaseTest {
   void givenFileWithNoName_thenAddSuffix() {
     String original = "/some/file/.gitignore";
     String fileWithSuffix =
-            FileUtils.getPathWithSuffixInFilename(Paths.get(original), "_1").toString();
+        FileUtils.getPathWithSuffixInFilename(Paths.get(original), "_1").toString();
 
     assertThat("/some/file/_1.gitignore", is(fileWithSuffix));
   }
@@ -157,13 +156,13 @@ class FileUtilsTest extends BaseTest {
   @DisplayName("throw exception if wrong parameters specified for pathWithSuffix")
   void wrongParametersPathWithSuffix() {
     Assertions.assertThrows(
-            NullPointerException.class, () -> FileUtils.getPathWithSuffixInFilename(null, "_1"));
+        NullPointerException.class, () -> FileUtils.getPathWithSuffixInFilename(null, "_1"));
 
     Assertions.assertThrows(
-            NullPointerException.class, () -> FileUtils.getPathWithSuffixInFilename(null, null));
+        NullPointerException.class, () -> FileUtils.getPathWithSuffixInFilename(null, null));
 
     Path bla = Paths.get("bla");
     Assertions.assertThrows(
-            NullPointerException.class, () -> FileUtils.getPathWithSuffixInFilename(bla, null));
+        NullPointerException.class, () -> FileUtils.getPathWithSuffixInFilename(bla, null));
   }
 }

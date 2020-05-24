@@ -123,4 +123,5 @@ pitest {
 
 checkstyle {
     toolVersion '8.32'
+    maxWarnings = 0
 }

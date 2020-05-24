@@ -1,10 +1,10 @@
 package ch.uhlme.utils;
 
-import org.junit.jupiter.api.Test;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
+
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("rawtypes")
 class QuadrupleTest {
@@ -20,13 +20,13 @@ class QuadrupleTest {
 
   @Test
   void givenObjects_thenEquals() {
-    Quadruple t1 = new Quadruple<>("a", "b", "c", "d");
-    Quadruple t2 = new Quadruple<>("z", "b", "c", "d");
-    Quadruple t3 = new Quadruple<>("a", "z", "c", "d");
-    Quadruple t4 = new Quadruple<>("a", "b", "z", "d");
-    Quadruple t5 = new Quadruple<>("a", "b", "c", "z");
-    Quadruple t6 = new Quadruple<>("a", "b", "c", "z");
-    Quadruple t7 = new Quadruple<>("a", "b", "c", "d");
+    final Quadruple t1 = new Quadruple<>("a", "b", "c", "d");
+    final Quadruple t2 = new Quadruple<>("z", "b", "c", "d");
+    final Quadruple t3 = new Quadruple<>("a", "z", "c", "d");
+    final Quadruple t4 = new Quadruple<>("a", "b", "z", "d");
+    final Quadruple t5 = new Quadruple<>("a", "b", "c", "z");
+    final Quadruple t6 = new Quadruple<>("a", "b", "c", "z");
+    final Quadruple t7 = new Quadruple<>("a", "b", "c", "d");
 
     assertThat(t1, not(""));
     assertThat(t1, is(t1));
