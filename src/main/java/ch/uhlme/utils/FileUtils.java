@@ -113,9 +113,12 @@ public class FileUtils {
    * files without an extension.
    *
    * <p>Examples (with suffix _1:
-   * <li>input.txt - input_1.txt
-   * <li>.gitignore - _1.gitignore
-   * <li>input - input_1
+   *
+   * <ul>
+   *   <li>input.txt - input_1.txt
+   *   <li>.gitignore - _1.gitignore
+   *   <li>input - input_1
+   * </ul>
    *
    * @param path path of the file
    * @param suffix suffix to insert

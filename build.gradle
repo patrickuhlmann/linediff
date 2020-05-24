@@ -1,5 +1,3 @@
-import com.github.spotbugs.snom.SpotBugsReport
-
 plugins {
     id 'java'
     id 'jacoco'
@@ -95,19 +93,15 @@ pmd {
 }
 
 spotbugsMain {
-    reports(({
-        html {
-            enabled = true
-        }
-    } as Closure<NamedDomainObjectContainer<? extends SpotBugsReport>>))
+    reports {
+        html.enabled = true
+    }
 }
 
 spotbugsTest {
-    reports(({
-        html {
-            enabled = true
-        }
-    } as Closure<NamedDomainObjectContainer<? extends SpotBugsReport>>))
+    reports {
+        html.enabled = true
+    }
 }
 
 pitest {
