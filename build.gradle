@@ -10,7 +10,7 @@ plugins {
 }
 
 group 'ch.uhlme'
-version '2.0.0'
+version '2.0.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -24,6 +24,13 @@ dependencies {
     implementation('com.google.flogger:flogger-system-backend:0.5.1')
     implementation('com.github.spotbugs:spotbugs-annotations:4.0.2')
 }
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+jar.dependsOn javadocJar
+jar.dependsOn sourcesJar
 
 compileJava   {
     sourceCompatibility = JavaVersion.VERSION_11

@@ -39,6 +39,10 @@ Furthermore it contains additional tools to preprocess the input files. Those ar
   
 All tools process line by line. The input files are expected to be UTF-8. All tools check it the output files already exist and abort in such a case
 
+Cross-plattform note: all tools will write line endings native to the plattform on which they are executed. e. g. if you take a file having windows-line-endings and run the tool under linux, the result file will have linux line-endings!
+
+This tool is using Semantic Versioning.
+
 ## Commandline Interface
 
  * `java -jar LineDifference-<release>.jar linediff [firstfile] [secondfile] [outputfolder]` <br>
@@ -60,7 +64,10 @@ All patterns are Java 8 patterns. You find a reference here: https://docs.oracle
 It uses JDK 11
 
  * `./gradlew jar` <br>
-Creates a jar that can be executed
+Creates a jar that can be executed. It also creates a source and a javadoc jar.
+
+ * `./gradlew javadoc` <br>
+Creates the javadoc for the project
 
  * `./gradlew check` <br>
 Executes the unit tests and generates various reports (unit test, coverage, pmd)
