@@ -73,7 +73,8 @@ public class Split {
     private Path getOutputFile() throws FileAlreadyExistsException {
         Path outputFile = FileUtils.getPathWithSuffixInFilename(inputFile, "_" + fileNumber);
         if (Files.exists(outputFile)) {
-            throw new FileAlreadyExistsException(String.format("the output file %s already exists", outputFile));
+            throw new FileAlreadyExistsException(
+                    String.format("the output file %s already exists", outputFile));
         }
         fileNumber++;
         return outputFile;

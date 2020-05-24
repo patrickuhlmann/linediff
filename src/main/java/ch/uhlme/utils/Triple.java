@@ -30,9 +30,9 @@ public class Triple<X, Y, Z> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Triple<?, ?, ?> triple = (Triple<?, ?, ?>) o;
-        return Objects.equals(first, triple.first) &&
-                Objects.equals(second, triple.second) &&
-                Objects.equals(third, triple.third);
+        return Objects.equals(first, triple.first)
+                && Objects.equals(second, triple.second)
+                && Objects.equals(third, triple.third);
     }
 
     @Override
@@ -42,10 +42,6 @@ public class Triple<X, Y, Z> {
 
     @Override
     public String toString() {
-        return "Triple{" +
-                "first=" + first +
-                ", second=" + second +
-                ", third=" + third +
-                '}';
+        return "Triple{" + "first=" + first + ", second=" + second + ", third=" + third + '}';
     }
 }

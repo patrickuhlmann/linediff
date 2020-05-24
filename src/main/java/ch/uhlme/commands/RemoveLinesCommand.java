@@ -34,7 +34,8 @@ public class RemoveLinesCommand implements Command {
         return "removelines";
     }
 
-    private Triple<Path, Path, Pattern> verifyParameters(String[] args) throws FileNotFoundException, FileAlreadyExistsException {
+    private Triple<Path, Path, Pattern> verifyParameters(String[] args)
+            throws FileNotFoundException, FileAlreadyExistsException {
         if (args == null || args.length != 3) {
             throw new IllegalArgumentException("usage: removelines <input> <output> <searchPattern>");
         }
@@ -46,7 +47,8 @@ public class RemoveLinesCommand implements Command {
 
         Path output = Paths.get(args[1]);
         if (Files.exists(output)) {
-            throw new FileAlreadyExistsException(String.format("the output file %s mustn't exist", output));
+            throw new FileAlreadyExistsException(
+                    String.format("the output file %s mustn't exist", output));
         }
 
         Pattern pattern = Pattern.compile(args[2]);

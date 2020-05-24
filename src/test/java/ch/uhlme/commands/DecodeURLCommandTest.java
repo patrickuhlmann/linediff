@@ -23,6 +23,7 @@ class DecodeURLCommandTest extends BaseTest {
     @SuppressWarnings("unused")
     @TempDir
     Path tempDir;
+
     private DecodeURLCommand decodeURLCommand;
 
     @BeforeEach
@@ -37,17 +38,13 @@ class DecodeURLCommandTest extends BaseTest {
         String[] oneArg = new String[]{input};
         String[] threeArgs = new String[]{input, "1", "2"};
 
+        Assertions.assertThrows(IllegalArgumentException.class, () -> decodeURLCommand.execute(null));
 
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> decodeURLCommand.execute(null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> decodeURLCommand.execute(oneArg));
 
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> decodeURLCommand.execute(oneArg));
-
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> decodeURLCommand.execute(threeArgs));
+        Assertions.assertThrows(
+                IllegalArgumentException.class, () -> decodeURLCommand.execute(threeArgs));
     }
-
 
     @Test
     @DisplayName("throw an exception if the input file doesn't exist")
@@ -55,9 +52,7 @@ class DecodeURLCommandTest extends BaseTest {
         String input = tempDir.resolve("nonexistinginput.txt").toString();
         String[] args = new String[]{input, "2"};
 
-
-        Assertions.assertThrows(FileNotFoundException.class,
-                () -> decodeURLCommand.execute(args));
+        Assertions.assertThrows(FileNotFoundException.class, () -> decodeURLCommand.execute(args));
     }
 
     @Test
@@ -67,9 +62,7 @@ class DecodeURLCommandTest extends BaseTest {
         String output = prepareEmptyFile(tempDir).toString();
         String[] args = new String[]{input, output};
 
-
-        Assertions.assertThrows(FileAlreadyExistsException.class,
-                () -> decodeURLCommand.execute(args));
+        Assertions.assertThrows(FileAlreadyExistsException.class, () -> decodeURLCommand.execute(args));
     }
 
     @Test
@@ -79,9 +72,7 @@ class DecodeURLCommandTest extends BaseTest {
         Path output = tempDir.resolve("output.txt");
         String[] args = new String[]{input.toString(), output.toString()};
 
-
         decodeURLCommand.execute(args);
-
 
         assertThat(output, FileContentIs.fileContentIs(List.of("Über", "Another")));
     }

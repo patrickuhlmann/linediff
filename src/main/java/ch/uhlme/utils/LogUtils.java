@@ -15,8 +15,8 @@ public class LogUtils {
             value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
             justification = "Known Bug: https://github.com/spotbugs/spotbugs/issues/259")
     public static void initializeLogging(String resource) throws IOException {
-        try (InputStream stream = Thread.currentThread().getContextClassLoader().
-                getResourceAsStream(resource)) {
+        try (InputStream stream =
+                     Thread.currentThread().getContextClassLoader().getResourceAsStream(resource)) {
 
             if (stream == null) {
                 throw new FileNotFoundException(String.format("unable to find resource: %s", resource));

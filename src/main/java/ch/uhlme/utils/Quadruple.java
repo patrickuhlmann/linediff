@@ -36,10 +36,10 @@ public class Quadruple<X, Y, Z, W> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Quadruple<?, ?, ?, ?> quadruple = (Quadruple<?, ?, ?, ?>) o;
-        return Objects.equals(first, quadruple.first) &&
-                Objects.equals(second, quadruple.second) &&
-                Objects.equals(third, quadruple.third) &&
-                Objects.equals(fourth, quadruple.fourth);
+        return Objects.equals(first, quadruple.first)
+                && Objects.equals(second, quadruple.second)
+                && Objects.equals(third, quadruple.third)
+                && Objects.equals(fourth, quadruple.fourth);
     }
 
     @Override
@@ -49,11 +49,15 @@ public class Quadruple<X, Y, Z, W> {
 
     @Override
     public String toString() {
-        return "Quadruple{" +
-                "first=" + first +
-                ", second=" + second +
-                ", third=" + third +
-                ", fourth=" + fourth +
-                '}';
+        return "Quadruple{"
+                + "first="
+                + first
+                + ", second="
+                + second
+                + ", third="
+                + third
+                + ", fourth="
+                + fourth
+                + '}';
     }
 }

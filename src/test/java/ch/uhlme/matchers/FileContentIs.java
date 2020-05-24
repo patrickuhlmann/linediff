@@ -60,7 +60,8 @@ public class FileContentIs extends TypeSafeMatcher<Path> {
         try {
             mismatchDescription.appendText("path " + item + " content was " + Files.readAllLines(item));
         } catch (IOException e) {
-            mismatchDescription.appendText("path " + item + " lead to an exception during the verification");
+            mismatchDescription.appendText(
+                    "path " + item + " lead to an exception during the verification");
         }
     }
 }

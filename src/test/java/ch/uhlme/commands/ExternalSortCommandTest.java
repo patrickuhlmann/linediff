@@ -22,6 +22,7 @@ class ExternalSortCommandTest extends BaseTest {
     @SuppressWarnings("unused")
     @TempDir
     Path tempDir;
+
     private ExternalSortCommand sortCommand;
 
     @BeforeEach
@@ -35,15 +36,11 @@ class ExternalSortCommandTest extends BaseTest {
         String[] oneArg = new String[]{"1"};
         String[] threeArgs = new String[]{"1", "2", "3"};
 
+        Assertions.assertThrows(IllegalArgumentException.class, () -> sortCommand.execute(null));
 
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> sortCommand.execute(null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> sortCommand.execute(oneArg));
 
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> sortCommand.execute(oneArg));
-
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> sortCommand.execute(threeArgs));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> sortCommand.execute(threeArgs));
     }
 
     @Test
@@ -51,9 +48,7 @@ class ExternalSortCommandTest extends BaseTest {
     void givenNonExistingInputFile_thenThrowException() {
         String[] args = new String[]{"input.txt", "output.txt"};
 
-
-        Assertions.assertThrows(FileNotFoundException.class,
-                () -> sortCommand.execute(args));
+        Assertions.assertThrows(FileNotFoundException.class, () -> sortCommand.execute(args));
     }
 
     @Test
@@ -63,9 +58,7 @@ class ExternalSortCommandTest extends BaseTest {
         String output = prepareEmptyFile(tempDir).toString();
         String[] args = new String[]{input, output};
 
-
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> sortCommand.execute(args));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> sortCommand.execute(args));
     }
 
     @Test
@@ -75,9 +68,7 @@ class ExternalSortCommandTest extends BaseTest {
         Path output = tempDir.resolve("output.txt");
         String[] args = new String[]{input, output.toString()};
 
-
         sortCommand.execute(args);
-
 
         assertThat(output, fileContentIs(Arrays.asList("a", "d", "f")));
     }

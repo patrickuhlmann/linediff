@@ -42,7 +42,7 @@ public class SplitCommand implements Command {
 
         int lines;
         try {
-            lines = Integer.parseInt(args[1]); //NOPMD
+            lines = Integer.parseInt(args[1]); // NOPMD
         } catch (NumberFormatException nfe) {
             throw new IllegalArgumentException("The number of lines must be a positive number");
         }

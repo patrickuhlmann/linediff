@@ -24,8 +24,7 @@ public class Tuple<X, Y> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Tuple<?, ?> tuple = (Tuple<?, ?>) o;
-        return Objects.equals(first, tuple.first) &&
-                Objects.equals(second, tuple.second);
+        return Objects.equals(first, tuple.first) && Objects.equals(second, tuple.second);
     }
 
     @Override
@@ -35,9 +34,6 @@ public class Tuple<X, Y> {
 
     @Override
     public String toString() {
-        return "Tuple{" +
-                "first=" + first +
-                ", second=" + second +
-                '}';
+        return "Tuple{" + "first=" + first + ", second=" + second + '}';
     }
 }

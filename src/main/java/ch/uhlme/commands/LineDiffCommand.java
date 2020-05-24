@@ -44,18 +44,17 @@ public class LineDiffCommand implements Command {
         Path secondPath = Paths.get(args[1]);
 
         if (!FileUtils.areLinesInFileSorted(firstPath) || !FileUtils.areLinesInFileSorted(secondPath)) {
-            throw new IllegalArgumentException("One of the input files is unsorted. Please sort if first");
+            throw new IllegalArgumentException(
+                    "One of the input files is unsorted. Please sort if first");
         }
 
         return new Tuple<>(firstPath, secondPath);
     }
 
     private void runDiff(Path firstPath, Path secondPath, Path outputFolderPath) throws IOException {
-        try (
-                InputFile firstFile = new InputFile(firstPath);
-                InputFile secondFile = new InputFile(secondPath);
-                OutputFolder outputFolder = new OutputFolder(outputFolderPath)
-        ) {
+        try (InputFile firstFile = new InputFile(firstPath);
+             InputFile secondFile = new InputFile(secondPath);
+             OutputFolder outputFolder = new OutputFolder(outputFolderPath)) {
             LineDiff diff = new LineDiff(firstFile, secondFile, outputFolder);
             diff.process();
         }

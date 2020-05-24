@@ -13,7 +13,8 @@ import static ch.uhlme.preparation.PrepareFile.prepareEmptyFile;
 
 @SuppressWarnings({"PMD.BeanMembersShouldSerialize", "PMD.DataflowAnomalyAnalysis"})
 class InputFileTest extends BaseTest {
-    private final static String INPUT_FILENAME = "input.txt";
+    private static final String INPUT_FILENAME = "input.txt";
+
     @SuppressWarnings("unused")
     @TempDir
     Path tempDir;
@@ -21,8 +22,7 @@ class InputFileTest extends BaseTest {
     @Test
     @DisplayName("throw exception if called with null")
     void givenNull_thenThrowsException() {
-        Assertions.assertThrows(NullPointerException.class,
-                () -> new InputFile(null));
+        Assertions.assertThrows(NullPointerException.class, () -> new InputFile(null));
     }
 
     @Test
@@ -30,9 +30,7 @@ class InputFileTest extends BaseTest {
     void givenFileNotExisting_thenThrowException() {
         Path filePath = tempDir.resolve(INPUT_FILENAME);
 
-
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> new InputFile(filePath));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new InputFile(filePath));
     }
 
     @Test
@@ -40,9 +38,9 @@ class InputFileTest extends BaseTest {
     void normalExecution() throws IOException {
         Path filePath = prepareEmptyFile(tempDir);
 
-        Assertions.assertDoesNotThrow(() -> {
-            new InputFile(filePath);
-        });
-
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    new InputFile(filePath);
+                });
     }
 }

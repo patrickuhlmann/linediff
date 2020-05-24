@@ -33,7 +33,8 @@ public class DecodeURLCommand implements Command {
         return "decodeurl";
     }
 
-    private Tuple<Path, Path> verifyParameters(String[] args) throws FileNotFoundException, FileAlreadyExistsException {
+    private Tuple<Path, Path> verifyParameters(String[] args)
+            throws FileNotFoundException, FileAlreadyExistsException {
         if (args == null || args.length != 2) {
             throw new IllegalArgumentException("usage: decodeurl <input> <output>");
         }
@@ -45,7 +46,8 @@ public class DecodeURLCommand implements Command {
 
         Path output = Paths.get(args[1]);
         if (Files.exists(output)) {
-            throw new FileAlreadyExistsException(String.format("the output file %s mustn't exist", output));
+            throw new FileAlreadyExistsException(
+                    String.format("the output file %s mustn't exist", output));
         }
 
         return new Tuple<>(input, output);

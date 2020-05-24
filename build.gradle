@@ -7,6 +7,7 @@ plugins {
     id "com.github.spotbugs" version "4.2.1"
     id 'pmd'
     id 'info.solidsoft.pitest' version '1.5.1'
+    id 'checkstyle'
 }
 
 group 'ch.uhlme'
@@ -118,4 +119,8 @@ pitest {
                      'java.io.InputStream',
                      'java.util.logging',
                      'ch.uhlme.utils.LogUtils']
+}
+
+checkstyle {
+    toolVersion '8.32'
 }

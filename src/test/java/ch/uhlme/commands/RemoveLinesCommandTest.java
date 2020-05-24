@@ -24,6 +24,7 @@ class RemoveLinesCommandTest extends BaseTest {
     @SuppressWarnings("unused")
     @TempDir
     Path tempDir;
+
     private RemoveLinesCommand removeLinesCommand;
 
     @BeforeEach
@@ -38,17 +39,14 @@ class RemoveLinesCommandTest extends BaseTest {
         String[] twoArgs = new String[]{input, "2"};
         String[] fiveArgs = new String[]{input, "2", "3", "4", "5"};
 
+        Assertions.assertThrows(IllegalArgumentException.class, () -> removeLinesCommand.execute(null));
 
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> removeLinesCommand.execute(null));
+        Assertions.assertThrows(
+                IllegalArgumentException.class, () -> removeLinesCommand.execute(twoArgs));
 
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> removeLinesCommand.execute(twoArgs));
-
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> removeLinesCommand.execute(fiveArgs));
+        Assertions.assertThrows(
+                IllegalArgumentException.class, () -> removeLinesCommand.execute(fiveArgs));
     }
-
 
     @Test
     @DisplayName("throw exception if the input file doesn't exist")
@@ -56,9 +54,7 @@ class RemoveLinesCommandTest extends BaseTest {
         String input = tempDir.resolve("nonexistinginput.txt").toString();
         String[] args = new String[]{input, "2", "3"};
 
-
-        Assertions.assertThrows(FileNotFoundException.class,
-                () -> removeLinesCommand.execute(args));
+        Assertions.assertThrows(FileNotFoundException.class, () -> removeLinesCommand.execute(args));
     }
 
     @Test
@@ -68,9 +64,8 @@ class RemoveLinesCommandTest extends BaseTest {
         String output = prepareEmptyFile(tempDir).toString();
         String[] args = new String[]{input, output, "3"};
 
-
-        Assertions.assertThrows(FileAlreadyExistsException.class,
-                () -> removeLinesCommand.execute(args));
+        Assertions.assertThrows(
+                FileAlreadyExistsException.class, () -> removeLinesCommand.execute(args));
     }
 
     @Test
@@ -80,20 +75,19 @@ class RemoveLinesCommandTest extends BaseTest {
         Path output = tempDir.resolve("output.txt");
         String[] args = new String[]{input, output.toString(), "[[[[["};
 
-
-        Assertions.assertThrows(PatternSyntaxException.class,
-                () -> removeLinesCommand.execute(args));
+        Assertions.assertThrows(PatternSyntaxException.class, () -> removeLinesCommand.execute(args));
     }
 
     @Test
     @DisplayName("normal execution")
     void normalExecution() throws Exception {
-        String input = prepareFileWithLines(tempDir, Arrays.asList("line1", "test", "line2", "", "line3")).toString();
+        String input =
+                prepareFileWithLines(tempDir, Arrays.asList("line1", "test", "line2", "", "line3"))
+                        .toString();
         Path output = tempDir.resolve("output.txt");
         String[] args = new String[]{input, output.toString(), "test"};
 
         removeLinesCommand.execute(args);
-
 
         assertThat(output, fileContentIs(Arrays.asList("line1", "line2", "", "line3")));
     }

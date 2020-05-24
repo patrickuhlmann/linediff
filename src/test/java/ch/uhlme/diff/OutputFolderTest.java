@@ -21,8 +21,7 @@ class OutputFolderTest extends BaseTest {
     @Test
     @DisplayName("exception if path is null")
     void givenNullPath_thenThrowException() {
-        Assertions.assertThrows(NullPointerException.class,
-                () -> new OutputFolder(null));
+        Assertions.assertThrows(NullPointerException.class, () -> new OutputFolder(null));
     }
 
     @Test
@@ -36,25 +35,19 @@ class OutputFolderTest extends BaseTest {
         createFileOrFail(output);
         String[] args = new String[]{"linediff", firstInput, secondInput, outputFolder.toString()};
 
-
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> Application.main(args));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Application.main(args));
         deleteFileOrFail(output);
 
         output = tempDir.resolve("output/first_only.txt");
         createFileOrFail(output);
 
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> Application.main(args)
-        );
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Application.main(args));
         deleteFileOrFail(output);
 
         output = tempDir.resolve("output/second_only.txt");
         createFileOrFail(output);
 
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> Application.main(args)
-        );
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Application.main(args));
     }
 
     @Test
@@ -62,9 +55,9 @@ class OutputFolderTest extends BaseTest {
     void normalExecution() {
         Path filePath = tempDir.resolve("output");
 
-
-        Assertions.assertDoesNotThrow(() -> {
-            new OutputFolder(filePath);
-        });
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    new OutputFolder(filePath);
+                });
     }
 }

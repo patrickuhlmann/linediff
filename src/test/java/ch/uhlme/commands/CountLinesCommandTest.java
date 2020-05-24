@@ -23,6 +23,7 @@ class CountLinesCommandTest extends BaseTest {
     @SuppressWarnings("unused")
     @TempDir
     Path tempDir;
+
     private CountLinesCommand countLinesCommand;
 
     @BeforeEach
@@ -35,17 +36,18 @@ class CountLinesCommandTest extends BaseTest {
     void givenWrongNumberOfArguments_thenThrowException() throws IOException {
         String input = prepareEmptyFile(tempDir).toString();
         String[] oneArg = new String[]{input};
-        String[] threeArgs = new String[]{input, "1", "2",};
+        String[] threeArgs =
+                new String[]{
+                        input, "1", "2",
+                };
 
+        Assertions.assertThrows(IllegalArgumentException.class, () -> countLinesCommand.execute(null));
 
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> countLinesCommand.execute(null));
+        Assertions.assertThrows(
+                IllegalArgumentException.class, () -> countLinesCommand.execute(oneArg));
 
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> countLinesCommand.execute(oneArg));
-
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> countLinesCommand.execute(threeArgs));
+        Assertions.assertThrows(
+                IllegalArgumentException.class, () -> countLinesCommand.execute(threeArgs));
     }
 
     @Test
@@ -54,9 +56,7 @@ class CountLinesCommandTest extends BaseTest {
         String input = tempDir.resolve("nonexistinginput.txt").toString();
         String[] args = new String[]{input, "2"};
 
-
-        Assertions.assertThrows(FileNotFoundException.class,
-                () -> countLinesCommand.execute(args));
+        Assertions.assertThrows(FileNotFoundException.class, () -> countLinesCommand.execute(args));
     }
 
     @Test
@@ -65,20 +65,17 @@ class CountLinesCommandTest extends BaseTest {
         String input = prepareEmptyFile(tempDir).toString();
         String[] args = new String[]{input, "[[[[["};
 
-
-        Assertions.assertThrows(PatternSyntaxException.class,
-                () -> countLinesCommand.execute(args));
+        Assertions.assertThrows(PatternSyntaxException.class, () -> countLinesCommand.execute(args));
     }
 
     @Test
     @DisplayName("normal execution")
     void normalExecution() throws Exception {
-        Path input = prepareFileWithLines(tempDir, Arrays.asList("Test1", "abc", "Test2", "def", "Test3"));
+        Path input =
+                prepareFileWithLines(tempDir, Arrays.asList("Test1", "abc", "Test2", "def", "Test3"));
         String[] args = new String[]{input.toString(), "Test"};
 
-
         countLinesCommand.execute(args);
-
 
         assertThat(countLinesCommand.getCounter(), is(3));
     }
