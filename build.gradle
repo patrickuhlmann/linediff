@@ -6,6 +6,7 @@ plugins {
     id 'pmd'
     id 'info.solidsoft.pitest' version '1.5.1'
     id 'checkstyle'
+    id "net.davidecavestro.gradle.jxr" version "0.2.1"
 }
 
 group 'ch.uhlme'
