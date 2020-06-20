@@ -7,6 +7,7 @@ plugins {
     id 'info.solidsoft.pitest' version '1.5.1'
     id 'checkstyle'
     id "net.davidecavestro.gradle.jxr" version "0.2.1"
+    id 'com.github.ben-manes.versions'  version '0.28.0' // see dependencyUpdates
 }
 
 group 'ch.uhlme'
@@ -22,7 +23,7 @@ dependencies {
     testImplementation('org.hamcrest:hamcrest-library:2.2')
     implementation('com.google.flogger:flogger:0.5.1')
     implementation('com.google.flogger:flogger-system-backend:0.5.1')
-    implementation('com.github.spotbugs:spotbugs-annotations:4.0.2')
+    implementation('com.github.spotbugs:spotbugs-annotations:4.0.4')
 }
 
 java {
@@ -117,6 +118,24 @@ pitest {
 }
 
 checkstyle {
-    toolVersion '8.32'
+    toolVersion '8.33'
     maxWarnings = 0
+}
+
+def isNonStable = { String version ->
+    def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase().contains(it) }
+    def regex = /^[0-9,.v-]+(-r)?$/
+    return !stableKeyword && !(version ==~ regex)
+}
+
+check.dependsOn dependencyUpdates
+dependencyUpdates {
+    rejectVersionIf {
+        isNonStable(it.candidate.version)
+    }
+
+    gradleReleaseChannel="current"
+    checkForGradleUpdate = true
+    outputDir = "build/reports"
+    reportfileName = "dependencyUpdates"
 }
