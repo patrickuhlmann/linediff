@@ -7,7 +7,7 @@ plugins {
     id 'info.solidsoft.pitest' version '1.5.2'
     id 'checkstyle'
     id "net.davidecavestro.gradle.jxr" version "0.2.1"
-    id 'com.github.ben-manes.versions'  version '0.30.0' // see dependencyUpdates
+    id 'com.github.ben-manes.versions'  version '0.31.0' // see dependencyUpdates
 }
 
 group 'ch.uhlme'
