@@ -1,4 +1,4 @@
-﻿<a href="https://github.com/patrickuhlmann/cevi-buchs-rohr-aarau-website/releases"><img src="https://img.shields.io/github/release/patrickuhlmann/linedifference.svg" alt="github release"></a>
+﻿<a href="https://github.com/patrickuhlmann/linedifference/releases"><img src="https://img.shields.io/github/release/patrickuhlmann/linedifference.svg" alt="github release"></a>
 
 License:
 ![GitHub](https://img.shields.io/github/license/patrickuhlmann/linedifference)
