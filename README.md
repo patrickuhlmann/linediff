@@ -75,6 +75,9 @@ Executes the unit tests and generates various reports (checkstyle, jacoco, pmd, 
  * `./gradlew pitest` <br>
 Executes mutation testing, note that the findings are not necessarily bugs
 
+ * `./gradlew nativeImage` <br>
+Creates a graal native image
+
 ## License
 
 The code is available under the terms of the MIT License
