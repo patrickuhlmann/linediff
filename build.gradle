@@ -2,13 +2,13 @@ plugins {
     id 'java'
     id 'jacoco'
     id "org.sonarqube" version "3.0"
-    id "com.github.spotbugs" version "4.5.1"
+    id "com.github.spotbugs" version "4.6.0"
     id 'pmd'
     id 'info.solidsoft.pitest' version '1.5.2'
     id 'checkstyle'
     id "net.davidecavestro.gradle.jxr" version "0.2.1"
-    id 'com.github.ben-manes.versions'  version '0.33.0' // see dependencyUpdates
-    id 'com.palantir.graal' version '0.7.1'
+    id 'com.github.ben-manes.versions'  version '0.36.0' // see dependencyUpdates
+    id 'com.palantir.graal' version '0.7.2'
 }
 
 group 'ch.uhlme'
