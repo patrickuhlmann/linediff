@@ -1,11 +1,11 @@
-﻿<a href="https://github.com/patrickuhlmann/linedifference/releases"><img src="https://img.shields.io/github/release/patrickuhlmann/linedifference.svg" alt="github release"></a>
+﻿<a href="https://github.com/patrickuhlmann/linediff/releases"><img src="https://img.shields.io/github/release/patrickuhlmann/linediff.svg" alt="github release"></a>
 
 License:
-![GitHub](https://img.shields.io/github/license/patrickuhlmann/linedifference)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fpatrickuhlmann%2Flinedifference.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fpatrickuhlmann%2Flinedifference?ref=badge_shield)
+![GitHub](https://img.shields.io/github/license/patrickuhlmann/linediff)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fpatrickuhlmann%2Flinediff.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fpatrickuhlmann%2Flinediff?ref=badge_shield)
 
-Build: [![Build Status](https://travis-ci.com/patrickuhlmann/linedifference.svg?branch=master)](https://travis-ci.com/patrickuhlmann/linedifference)
-<img src="https://api.dependabot.com/badges/status?host=github&amp;repo=patrickuhlmann/linedifference" alt="Dependabot Status" />
+Build: [![Build Status](https://travis-ci.com/patrickuhlmann/linediff.svg?branch=master)](https://travis-ci.com/patrickuhlmann/linedifference)
+<img src="https://api.dependabot.com/badges/status?host=github&amp;repo=patrickuhlmann/linediff" alt="Dependabot Status" />
 
 Metrics: 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=alert_status)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
