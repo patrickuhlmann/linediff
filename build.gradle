@@ -130,7 +130,7 @@ pitest {
 }
 
 checkstyle {
-    toolVersion '8.36.2'
+    toolVersion '8.39'
     maxWarnings = 0
 }
 
