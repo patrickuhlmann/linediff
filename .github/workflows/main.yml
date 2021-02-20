@@ -30,7 +30,6 @@ jobs:
       
   build_and_test:
     name: "Build and Test"
-    needs: analyze
     runs-on: ubuntu-latest
 
     steps:
@@ -59,11 +58,8 @@ jobs:
         run: chmod +x gradlew
         
       - name: Build with Gradle
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew build nativeImage sonarqube --info
-
+        run: ./gradlew build
+        
       - name: Archive jars
         uses: actions/upload-artifact@v2
         with:
@@ -75,10 +71,19 @@ jobs:
         with:
           name: reports
           path: build/reports
+        
+      - name: Sonarqube
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew sonarqube --info
+        
+      - name: Native Image
+        run: ./gradlew nativeImage
           
   graal_vm_images:
     runs-on: ${{ matrix.os }}
-    needs: build_and_test
+    needs: [analyze, build_and_test]
     
     strategy:
       matrix:
