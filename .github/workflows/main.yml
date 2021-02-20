@@ -78,6 +78,7 @@ jobs:
           
   graal_vm_images:
     runs-on: ${{ matrix.os }}
+    needs: build_and_test
     
     strategy:
       matrix:
@@ -101,3 +102,12 @@ jobs:
       - name: Install native-image component
         run: |
           ${{ matrix.gu-binary }} install native-image
+          
+      - name: Build Native Image
+        run: native-image ch.uhlme.Application linediff
+        
+      - name: Archive native image
+        uses: actions/upload-artifact@v2
+        with:
+          name: linediff-${{ matrix.os }}
+          path: linediff
