@@ -14,8 +14,6 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix:
-        language: [ 'java' ]
 
     steps:
       - name: Checkout repository
@@ -72,7 +70,7 @@ jobs:
           name: jars
           path: build/libs
           
-      - name: Archive report
+      - name: Archive reports
         uses: actions/upload-artifact@v2
         with:
           name: reports
