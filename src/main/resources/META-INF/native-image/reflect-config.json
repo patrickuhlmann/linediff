@@ -1,0 +1,6 @@
+[
+{
+  "name":"com.google.common.flogger.backend.system.DefaultPlatform",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+}
+]
