@@ -30,7 +30,6 @@ jobs:
       
   build_and_test:
     name: "Build and Test"
-    needs: analyze
     runs-on: ubuntu-latest
 
     steps:
@@ -45,25 +44,22 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
+          key: ${{ runner.os }}-sonar-cache
           restore-keys: ${{ runner.os }}-sonar
           
       - name: Cache Gradle packages
         uses: actions/cache@v1
         with:
           path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          key: ${{ runner.os }}-gradle-cache-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
           
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
         
       - name: Build with Gradle
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew build sonarqube --info
-
+        run: ./gradlew build
+        
       - name: Archive jars
         uses: actions/upload-artifact@v2
         with:
@@ -75,3 +71,84 @@ jobs:
         with:
           name: reports
           path: build/reports
+        
+      - name: Sonarqube
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew sonarqube --info
+                
+  owasp_check:
+    name: "OWASP Check"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+          
+      - name: Cache Gradle packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-cache-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+          
+      - name: Cache Depdendency-Check-Data
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/dependency-check-data
+          key: ${{ runner.os }}-gradle-dependency-check-data-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+          
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        
+      - name: Build with Gradle
+        run: ./gradlew dependencyCheckAnalyze
+          
+  graal_vm_images:
+    runs-on: ${{ matrix.os }}
+    needs: [analyze, build_and_test, owasp_check]
+    
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        linediff-binary: [linediff, linediff.exe]
+        exclude:
+          - os: ubuntu-latest
+            linediff-binary: linediff.exe
+          - os: macos-latest
+            linediff-binary: linediff.exe
+          - os: windows-latest
+            linediff-binary: linediff
+    
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+          
+      - name: Cache Gradle packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-cache-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+          
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      
+      - name: Build with Gradle
+        run: ./gradlew nativeImage --info
+        
+      - name: Archive native image
+        uses: actions/upload-artifact@v2
+        with:
+          name: linediff-${{ matrix.os }}
+          path: ./build/graal/${{ matrix.linediff-binary }}
