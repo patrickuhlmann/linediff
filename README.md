@@ -1,24 +1,16 @@
-﻿<a href="https://github.com/patrickuhlmann/linediff/releases"><img src="https://img.shields.io/github/release/patrickuhlmann/linediff.svg" alt="github release"></a>
-
-License:
-![GitHub](https://img.shields.io/github/license/patrickuhlmann/linediff)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fpatrickuhlmann%2Flinediff.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fpatrickuhlmann%2Flinediff?ref=badge_shield)
-
-Build: [![Build Status](https://travis-ci.com/patrickuhlmann/linediff.svg?branch=master)](https://travis-ci.com/patrickuhlmann/linedifference)
-<img src="https://api.dependabot.com/badges/status?host=github&amp;repo=patrickuhlmann/linediff" alt="Dependabot Status" />
+LineDiff
+=========
+Small command line tool to compare two files and identify which lines they have in common and which they don't 
 
 Metrics: 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=alert_status)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=security_rating)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
-
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=bugs)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=code_smells)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
+The Build is ![Buildstatus](https://github.com/patrickuhlmann/linediff/workflows/Main/badge.svg)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=coverage)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=ncloc)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
-[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=sqale_index)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
+
+## Current Release
+
+The latest version is 
+<a href="https://github.com/patrickuhlmann/linediff/releases"><img src="https://img.shields.io/github/release/patrickuhlmann/linediff.svg" alt="github release"></a>
 
 ## Getting Started
 
@@ -43,7 +35,7 @@ Cross-plattform note: all tools will write line endings native to the plattform 
 
 This tool is using Semantic Versioning.
 
-## Commandline Interface
+## Usage
 
  * `java -jar LineDifference-<release>.jar linediff [firstfile] [secondfile] [outputfolder]` <br>
  * `java -jar LineDifference-<release>.jar externalsort [inputfile] [outputfile]` <br>
@@ -66,21 +58,8 @@ It uses JDK 11
  * `./gradlew jar` <br>
 Creates a jar that can be executed. It also creates a source and a javadoc jar.
 
- * `./gradlew javadoc jxr` <br>
-Creates the javadoc and jxr report for the project
-
  * `./gradlew check` <br>
 Executes the unit tests and generates various reports (checkstyle, jacoco, pmd, spotbugs, tests)
 
- * `./gradlew pitest` <br>
-Executes mutation testing, note that the findings are not necessarily bugs
-
- * `./gradlew dependencyCheckAnalyze` <br>
- Checks if vulnerable dependencies have been used
-
  * `./gradlew nativeImage` <br>
 Creates a graal native image
-
-## License
-
-The code is available under the terms of the MIT License
