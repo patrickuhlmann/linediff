@@ -130,6 +130,8 @@ jobs:
             gu-binary: gu
     
     steps:
+      - uses: actions/checkout@v2
+      
       - name: Setup Graalvm
         id: setup-graalvm
         uses: DeLaGuardo/setup-graalvm@master
