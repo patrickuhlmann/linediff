@@ -58,9 +58,6 @@ jar {
     }
 }
 
-
-check.dependsOn dependencyCheckAnalyze
-
 dependencyCheck {
 	failOnError
 	failBuildOnCVSS=7

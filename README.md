@@ -75,6 +75,9 @@ Executes the unit tests and generates various reports (checkstyle, jacoco, pmd, 
  * `./gradlew pitest` <br>
 Executes mutation testing, note that the findings are not necessarily bugs
 
+ * `./gradlew dependencyCheckAnalyze` <br>
+ Checks if vulnerable dependencies have been used
+
  * `./gradlew nativeImage` <br>
 Creates a graal native image
 
