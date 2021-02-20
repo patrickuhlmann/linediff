@@ -111,7 +111,7 @@ jobs:
         run: chmod +x gradlew
         
       - name: Build with Gradle
-        run: ./gradlew dependencyCheckAnalyze
+        run: ./gradlew dependencyCheckAnalyze --info
           
   graal_vm_images:
     runs-on: ${{ matrix.os }}
