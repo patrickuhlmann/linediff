@@ -9,6 +9,7 @@ plugins {
     id "net.davidecavestro.gradle.jxr" version "0.2.1"
     id 'com.github.ben-manes.versions'  version '0.36.0' // see dependencyUpdates
     id 'com.palantir.graal' version '0.7.2'
+    id "org.owasp.dependencycheck" version "6.1.1"
 }
 
 group 'ch.uhlme'
@@ -56,6 +57,15 @@ jar {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
+
+
+check.dependsOn dependencyCheckAnalyze
+
+dependencyCheck {
+	failOnError
+	failBuildOnCVSS=7
+}
+
 
 /* jacoco configuration */
 check.dependsOn jacocoTestReport
