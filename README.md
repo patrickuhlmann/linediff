@@ -4,8 +4,8 @@ Small command line tool to compare two files and identify which lines they have 
 
 Metrics: 
 The Build is ![Buildstatus](https://github.com/patrickuhlmann/linediff/workflows/Main/badge.svg)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=coverage)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=patrickuhlmann_linedifference&metric=ncloc)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=linediff&metric=coverage)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=linediff&metric=ncloc)](https://sonarcloud.io/dashboard?id=patrickuhlmann_linedifference)
 
 ## Current Release
 
