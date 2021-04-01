@@ -92,7 +92,7 @@ jobs:
           
   graal_vm_images:
     runs-on: ${{ matrix.os }}
-    needs: [analyze, build_and_test, owasp_check]
+    needs: [build_and_test, owasp_check]
     
     strategy:
       matrix:
