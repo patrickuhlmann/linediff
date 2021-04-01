@@ -1,31 +1,11 @@
-name: Main
+name: Build Branches
 
 on:
   push:
-    branches:
-  schedule:
-    - cron: '21 18 1 * *'
+    branches-ignore:
+      - main
 
 jobs:
-  analyze:
-    runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v1
-        
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v1
-
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v1
-      
   build_and_test:
     name: "Build and Test"
     runs-on: ubuntu-latest
@@ -37,13 +17,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-          
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar-cache
-          restore-keys: ${{ runner.os }}-sonar
           
       - name: Cache Gradle packages
         uses: actions/cache@v1
@@ -69,12 +42,6 @@ jobs:
         with:
           name: reports
           path: build/reports
-        
-      - name: Sonarqube
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonarqube --info
                 
   owasp_check:
     name: "OWASP Check"
@@ -107,7 +74,7 @@ jobs:
         
       - name: Build with Gradle
         run: ./gradlew dependencyCheckAnalyze
-          
+
   graal_vm_images:
     runs-on: ${{ matrix.os }}
     needs: [analyze, build_and_test, owasp_check]
