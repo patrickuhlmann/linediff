@@ -9,7 +9,7 @@ plugins {
     id "net.davidecavestro.gradle.jxr" version "0.2.1"
     id 'com.github.ben-manes.versions'  version '0.39.0' // see dependencyUpdates
     id 'com.palantir.graal' version '0.7.2'
-    id "org.owasp.dependencycheck" version "6.2.0"
+    id "org.owasp.dependencycheck" version "6.2.1"
 }
 
 group 'ch.uhlme'
