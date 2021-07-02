@@ -26,7 +26,7 @@ dependencies {
     implementation('com.h3xstream.findsecbugs:findsecbugs-plugin:1.11.0')
     implementation('com.google.flogger:flogger:0.6')
     implementation('com.google.flogger:flogger-system-backend:0.6')
-    implementation('com.github.spotbugs:spotbugs-annotations:4.2.3')
+    implementation('com.github.spotbugs:spotbugs-annotations:4.3.0')
 }
 
 java {
