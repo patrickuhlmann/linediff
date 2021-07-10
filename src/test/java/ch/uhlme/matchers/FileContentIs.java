@@ -6,6 +6,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.hamcrest.Description;
@@ -21,7 +22,7 @@ public class FileContentIs extends TypeSafeMatcher<Path> {
   }
 
   public FileContentIs(List<String> lines) {
-    this.lines = lines;
+    this.lines = new ArrayList<>(lines);
   }
 
   public static Matcher<Path> fileContentIs(List<String> lines) {

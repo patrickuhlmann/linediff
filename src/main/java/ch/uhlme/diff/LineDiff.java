@@ -1,9 +1,12 @@
 package ch.uhlme.diff;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.util.Objects;
 
 @SuppressWarnings("PMD.BeanMembersShouldSerialize")
+@SuppressFBWarnings(
+        value = "EI_EXPOSE_REP2")
 public class LineDiff {
   private final InputFile firstInput;
   private final InputFile secondInput;
